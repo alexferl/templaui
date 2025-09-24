@@ -9,8 +9,10 @@ type DocumentProps struct {
 	Description string
 	// HTML language attribute (defaults to "en")
 	Lang string
-	// Path to favicon (defaults to data: URI if empty)
+	// Path to favicon (if empty and NoFavicon is false, uses data: URI fallback)
 	Favicon string
+	// If true, completely omits favicon link tag instead of using data: URI fallback
+	NoFavicon bool
 	// If true, loads Bulma CSS from local file instead of CDN
 	UseLocalCSS bool
 	// Custom path for local Bulma CSS file
@@ -59,6 +61,7 @@ templ Document(props DocumentProps, headContents ...templ.Component) {
 			@MetaHead(MetaHeadProps{
 				Description: p.Description,
 				Favicon:     p.Favicon,
+				NoFavicon:   p.NoFavicon,
 				Charset:     p.Charset,
 				Viewport:    p.Viewport,
 				Theme:       p.Theme,
@@ -110,8 +113,10 @@ templ Head(props HeadProps, headContents ...templ.Component) {
 type MetaHeadProps struct {
 	// Meta description for search engines
 	Description string
-	// Path to favicon file
+	// Path to favicon file (if empty and NoFavicon is false, uses data: URI fallback)
 	Favicon string
+	// If true, completely omits favicon link tag instead of using data: URI fallback
+	NoFavicon bool
 	// Character encoding (usually UTF-8)
 	Charset string
 	// Viewport configuration for responsive design
@@ -131,6 +136,10 @@ type MetaHeadProps struct {
 // Only outputs tags when corresponding properties are provided (except charset/viewport).
 // Automatically defaults to Bulma's primary color (#00d1b2) for theme-color and
 // "light dark" for color-scheme if not specified.
+// Favicon behavior:
+// - If NoFavicon is true: No favicon link is generated
+// - If Favicon is provided: Uses the provided favicon path
+// - If Favicon is empty and NoFavicon is false: Uses empty data URI fallback
 templ MetaHead(props MetaHeadProps) {
 	// Essential meta tags - always included
 	@Meta(MetaProps{Charset: props.Charset})
@@ -157,11 +166,13 @@ templ MetaHead(props MetaHeadProps) {
 	} else {
 		@Meta(MetaProps{Name: "theme-color", Content: "#00d1b2"})
 	}
-	// Favicon handling - provides empty data URI if no favicon specified
-	if props.Favicon != "" {
-		@Link(LinkProps{Rel: "icon", Href: props.Favicon})
-	} else {
-		@Link(LinkProps{Rel: "icon", Href: "data:,"})
+	// Favicon handling - can be completely omitted, use custom path, or fallback to data URI
+	if !props.NoFavicon {
+		if props.Favicon != "" {
+			@Link(LinkProps{Rel: "icon", Href: props.Favicon})
+		} else {
+			@Link(LinkProps{Rel: "icon", Href: "data:,"})
+		}
 	}
 }
 

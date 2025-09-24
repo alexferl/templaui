@@ -69,6 +69,30 @@ func TestDocument(t *testing.T) {
 				`<link rel="stylesheet" href="/static/css/bulma.min.css">`,
 			},
 		},
+		{
+			name: "With NoFavicon true",
+			props: DocumentProps{
+				Title:     "No Favicon App",
+				NoFavicon: true,
+			},
+			contains: []string{
+				`<title>No Favicon App</title>`,
+				`<meta name="color-scheme" content="light dark">`,
+				`<meta name="theme-color" content="#00d1b2">`,
+			},
+		},
+		{
+			name: "With custom favicon and NoFavicon false",
+			props: DocumentProps{
+				Title:     "Custom Favicon App",
+				Favicon:   "/my-favicon.ico",
+				NoFavicon: false,
+			},
+			contains: []string{
+				`<title>Custom Favicon App</title>`,
+				`<link rel="icon" href="/my-favicon.ico">`,
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -221,6 +245,36 @@ func TestMetaHead(t *testing.T) {
 			contains: []string{
 				`<meta name="color-scheme" content="dark light">`,
 				`<meta name="theme-color" content="#00d1b2">`,
+			},
+		},
+		{
+			name: "With NoFavicon true",
+			props: MetaHeadProps{
+				Charset:     "UTF-8",
+				Viewport:    "width=device-width, initial-scale=1.0",
+				Description: "Test description",
+				NoFavicon:   true,
+			},
+			contains: []string{
+				`<meta charset="UTF-8">`,
+				`<meta name="viewport" content="width=device-width, initial-scale=1.0">`,
+				`<meta name="description" content="Test description">`,
+				`<meta name="color-scheme" content="light dark">`,
+				`<meta name="theme-color" content="#00d1b2">`,
+			},
+		},
+		{
+			name: "With custom favicon and NoFavicon false",
+			props: MetaHeadProps{
+				Charset:   "UTF-8",
+				Viewport:  "width=device-width, initial-scale=1.0",
+				Favicon:   "/test-favicon.png",
+				NoFavicon: false,
+			},
+			contains: []string{
+				`<meta charset="UTF-8">`,
+				`<meta name="viewport" content="width=device-width, initial-scale=1.0">`,
+				`<link rel="icon" href="/test-favicon.png">`,
 			},
 		},
 	}
