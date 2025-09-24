@@ -1,0 +1,368 @@
+package file
+
+import "strings"
+
+// Size represents file upload component size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small file upload size
+	IsNormal Size = "is-normal" // Normal file upload size (default)
+	IsMedium Size = "is-medium" // Medium file upload size
+	IsLarge  Size = "is-large"  // Large file upload size
+)
+
+// Color represents file upload component color variants
+type Color string
+
+const (
+	IsWhite   Color = "is-white"   // White file upload styling
+	IsBlack   Color = "is-black"   // Black file upload styling
+	IsLight   Color = "is-light"   // Light file upload styling
+	IsDark    Color = "is-dark"    // Dark file upload styling
+	IsPrimary Color = "is-primary" // Primary file upload styling (brand color)
+	IsLink    Color = "is-link"    // Link-style file upload
+	IsInfo    Color = "is-info"    // Info file upload (blue)
+	IsSuccess Color = "is-success" // Success file upload (green)
+	IsWarning Color = "is-warning" // Warning file upload (yellow)
+	IsDanger  Color = "is-danger"  // Danger file upload (red)
+)
+
+// FileProps defines configuration for file upload containers.
+//
+// Use this type to configure Bulma .file elements which provide
+// custom-styled file upload components. Multi-part component that
+// wraps native file inputs with enhanced visual styling and
+// optional file name display. Requires JavaScript for functionality.
+type FileProps struct {
+	// Optional HTML id attribute for the file container
+	ID string
+
+	// List of additional CSS classes to apply to the file container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Show file name container alongside upload button
+	HasName bool
+
+	// Apply boxed styling with background and rounded corners
+	IsBoxed bool
+
+	// Expand file upload to full width of container
+	IsFullwidth bool
+
+	// Center align the file upload component
+	IsCentered bool
+
+	// Right align the file upload component
+	IsRight bool
+
+	// File upload component size (small, normal, medium, large)
+	Size Size
+
+	// File upload component color theme
+	Color Color
+}
+
+// File renders custom-styled file upload components.
+//
+// This component renders Bulma's .file class which creates enhanced
+// file upload interfaces with custom styling. Wraps native file inputs
+// to provide consistent cross-browser appearance. Multi-part component
+// requiring FileLabel, FileInput, FileCTA, and optional FileName
+// sub-components for complete functionality.
+templ File(props ...FileProps) {
+	{{ var p FileProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file",
+			templ.KV("has-name", p.HasName),
+			templ.KV("is-boxed", p.IsBoxed),
+			templ.KV("is-fullwidth", p.IsFullwidth),
+			templ.KV("is-centered", p.IsCentered),
+			templ.KV("is-right", p.IsRight),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// FileLabelProps defines configuration for file upload label wrappers.
+// Use this type to configure .file-label elements which provide
+// the interactive clickable wrapper around file upload components.
+// Essential for making the entire upload area clickable and
+// accessible for keyboard navigation.
+type FileLabelProps struct {
+	// Optional HTML id attribute for the file label
+	ID string
+
+	// List of additional CSS classes to apply to the label
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FileLabel renders interactive file upload label wrappers.
+//
+// This component renders Bulma's .file-label class as a label element,
+// which creates the interactive clickable area for file uploads.
+// Should contain FileInput, FileCTA, and optional FileName components
+// for complete upload functionality.
+templ FileLabel(props ...FileLabelProps) {
+	{{ var p FileLabelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<label
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file-label",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</label>
+}
+
+// FileInputProps defines configuration for native file input elements.
+// Use this type to configure .file-input elements which contain
+// the native HTML file input hidden for styling purposes.
+// Supports all standard file input attributes including
+// multiple selection and file type filtering.
+type FileInputProps struct {
+	// Optional HTML id attribute for the file input
+	ID string
+
+	// List of additional CSS classes to apply to the input
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for form submission
+	Name string
+
+	// Accept attribute for file type filtering (e.g., "image/*", ".pdf")
+	Accept string
+
+	// Enable multiple file selection
+	Multiple bool
+
+	// Disable file input interaction
+	Disabled bool
+
+	// Mark file input as required for form validation
+	Required bool
+}
+
+// FileInput renders native file input elements (hidden for styling).
+//
+// This component renders Bulma's .file-input class on native HTML
+// file inputs, which are hidden for styling purposes but provide
+// the actual file selection functionality. Supports multiple files,
+// file type filtering, and standard form validation attributes.
+templ FileInput(props ...FileInputProps) {
+	{{ var p FileInputProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<input
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		type="file"
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Accept != "" {
+			accept={ p.Accept }
+		}
+		if p.Multiple {
+			multiple
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Required {
+			required
+		}
+		class={
+			"file-input",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	/>
+}
+
+// FileCTAProps defines configuration for file upload call-to-action areas.
+// Use this type to configure .file-cta elements which provide
+// the styled upload button area containing icons and text.
+// Main visual component that users interact with for file selection.
+type FileCTAProps struct {
+	// Optional HTML id attribute for the file CTA
+	ID string
+
+	// List of additional CSS classes to apply to the CTA
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FileCTA renders file upload call-to-action areas.
+//
+// This component renders Bulma's .file-cta class which creates
+// the styled upload button area. Should contain FileIcon and
+// FileText components for complete visual presentation.
+templ FileCTA(props ...FileCTAProps) {
+	{{ var p FileCTAProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file-cta",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+// FileIconProps defines configuration for file upload icon containers.
+// Use this type to configure .file-icon elements which provide
+// icon placeholders within file upload buttons. Typically
+// contains Font Awesome or other icon fonts for visual enhancement.
+type FileIconProps struct {
+	// Optional HTML id attribute for the file icon
+	ID string
+
+	// List of additional CSS classes to apply to the icon container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FileIcon renders file upload icon containers.
+//
+// This component renders Bulma's .file-icon class which creates
+// icon placeholders within file upload buttons. Perfect for
+// upload icons like fa-upload or other visual indicators.
+templ FileIcon(props ...FileIconProps) {
+	{{ var p FileIconProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file-icon",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+// FileTextProps defines configuration for file upload text labels.
+// Use this type to configure .file-label elements which display
+// the upload button text like "Choose a file..." within the
+// file upload call-to-action area.
+type FileTextProps struct {
+	// Optional HTML id attribute for the file text
+	ID string
+
+	// List of additional CSS classes to apply to the text container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FileText renders file upload text labels.
+//
+// This component renders text labels for file upload buttons,
+// typically displaying "Choose a file..." or similar call-to-action
+// text. Uses .file-label class for proper styling within FileCTA.
+templ FileText(props ...FileTextProps) {
+	{{ var p FileTextProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file-label",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+// FileNameProps defines configuration for selected file name containers.
+// Use this type to configure .file-name elements which display
+// the name of the selected file. Only visible when the file
+// container has HasName enabled. Requires JavaScript for dynamic updates.
+type FileNameProps struct {
+	// Optional HTML id attribute for the file name container
+	ID string
+
+	// List of additional CSS classes to apply to the name container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FileName renders selected file name display containers.
+//
+// This component renders Bulma's .file-name class which displays
+// the name of the selected file. Only appears when the parent
+// file container has HasName enabled. Requires JavaScript to
+// dynamically update with selected file names.
+templ FileName(props ...FileNameProps) {
+	{{ var p FileNameProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"file-name",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}

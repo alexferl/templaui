@@ -1,0 +1,118 @@
+package icon
+
+import (
+	"strings"
+
+	"github.com/alexferl/templaui/helpers"
+)
+
+// Size represents icon container size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small icon container (1rem x 1rem)
+	IsMedium Size = "is-medium" // Medium icon container (2rem x 2rem)
+	IsLarge  Size = "is-large"  // Large icon container (3rem x 3rem)
+)
+
+// IconProps defines configuration for icon containers.
+//
+// Use this type to configure Bulma .icon elements which provide
+// consistent square containers for icon fonts. The icon container
+// prevents page jumping during icon font loading and ensures proper
+// spacing regardless of the actual icon library used (Font Awesome,
+// Material Icons, etc.). Default size is 1.5rem x 1.5rem.
+type IconProps struct {
+	// Optional HTML id attribute for the icon container
+	ID string
+
+	// List of additional CSS classes to apply to the icon container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Icon color using Bulma color helpers
+	Color helpers.Color
+
+	// Size of the icon container (small, default, medium, large)
+	Size Size
+}
+
+// Icon renders a container for icon fonts.
+//
+// This component renders Bulma's .icon class as a span element,
+// which creates a square container for icon fonts like Font Awesome,
+// Material Icons, or Ionicons. The container prevents layout shifts
+// during icon loading and provides consistent sizing. Icons inherit
+// text color and can be styled using Bulma's color helpers.
+templ Icon(props ...IconProps) {
+	{{ var p IconProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"icon",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+// IconTextProps defines configuration for icon-text containers.
+// Use this type to configure Bulma .icon-text elements which allow
+// combining icons with text labels in a flexible layout. Perfect for
+// buttons, navigation items, or any UI elements that need both
+// icons and descriptive text side by side.
+type IconTextProps struct {
+	// Optional HTML id attribute for the icon-text container
+	ID string
+
+	// List of additional CSS classes to apply to the icon-text container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Color for both icons and text using Bulma color helpers
+	Color helpers.Color
+
+	// Size for the icon containers within the text group
+	Size Size
+}
+
+// IconText renders a container for icons with accompanying text.
+//
+// This component renders Bulma's .icon-text class as a span element,
+// which provides a flexible container for combining multiple icons
+// with text elements. The container handles proper spacing and
+// alignment between icons and text. Commonly used in buttons,
+// navigation menus, and descriptive UI elements.
+templ IconText(props ...IconTextProps) {
+	{{ var p IconTextProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"icon-text",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}

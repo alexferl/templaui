@@ -1,0 +1,328 @@
+package pagination
+
+import "strings"
+
+// Size represents pagination text size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small pagination text size
+	IsMedium Size = "is-medium" // Medium pagination text size
+	IsLarge  Size = "is-large"  // Large pagination text size
+)
+
+// Alignment represents pagination alignment options
+type Alignment string
+
+const (
+	IsCentered Alignment = "is-centered" // Center align pagination
+	IsRight    Alignment = "is-right"    // Right align pagination
+)
+
+// PaginationProps defines configuration for pagination container elements.
+//
+// Use this type to configure Bulma .pagination elements which create
+// responsive navigation components for multi-page content. Supports
+// incremental navigation (previous/next), page numbers, and range
+// separators. Essential for large datasets and content collections.
+type PaginationProps struct {
+	// Optional HTML id attribute for the pagination container
+	ID string
+
+	// List of additional CSS classes to apply to the pagination
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Horizontal alignment of pagination elements
+	Alignment Alignment
+
+	// Text size for all pagination elements
+	Size Size
+
+	// Apply active state styling to entire pagination
+	IsActive bool
+
+	// Apply current page styling to entire pagination
+	IsCurrent bool
+
+	// Apply focused state styling to entire pagination
+	IsFocused bool
+
+	// Apply selected state styling to entire pagination
+	IsSelected bool
+
+	// Disable all pagination interactions
+	IsDisabled bool
+
+	// Apply rounded corners to pagination elements
+	IsRounded bool
+}
+
+// Pagination renders navigation for multi-page content.
+//
+// This component renders Bulma's .pagination class as a nav element,
+// which creates responsive navigation components with proper ARIA
+// attributes for accessibility. Comprises previous/next controls,
+// page number lists, and ellipsis separators. Fully composable
+// allowing any combination of sub-components.
+templ Pagination(props ...PaginationProps) {
+	{{ var p PaginationProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<nav
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Alignment), p.Alignment != ""),
+			templ.KV("is-disabled", p.IsDisabled),
+			templ.KV("is-rounded", p.IsRounded),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-current", p.IsCurrent),
+			templ.KV("is-focused", p.IsFocused),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		role="navigation"
+		aria-label="pagination"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</nav>
+}
+
+// PaginationPreviousProps defines configuration for previous page buttons.
+// Use this type to configure .pagination-previous elements which provide
+// navigation to the previous page in paginated content. Can be disabled
+// when on the first page to prevent invalid navigation.
+type PaginationPreviousProps struct {
+	// Optional HTML id attribute for the previous button
+	ID string
+
+	// List of additional CSS classes to apply to the button
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Disable button when on first page
+	IsDisabled bool
+}
+
+// PaginationPrevious renders previous page navigation buttons.
+//
+// This component renders Bulma's .pagination-previous class as an anchor element,
+// which creates navigation to the previous page. Should be disabled when
+// on the first page to prevent invalid navigation. Includes proper
+// disabled state styling and accessibility attributes.
+templ PaginationPrevious(props ...PaginationPreviousProps) {
+	{{ var p PaginationPreviousProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination-previous",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		if p.IsDisabled {
+			disabled
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// PaginationNextProps defines configuration for next page buttons.
+// Use this type to configure .pagination-next elements which provide
+// navigation to the next page in paginated content. Can be disabled
+// when on the last page to prevent invalid navigation.
+type PaginationNextProps struct {
+	// Optional HTML id attribute for the next button
+	ID string
+
+	// List of additional CSS classes to apply to the button
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Disable button when on last page
+	IsDisabled bool
+}
+
+// PaginationNext renders next page navigation buttons.
+//
+// This component renders Bulma's .pagination-next class as an anchor element,
+// which creates navigation to the next page. Should be disabled when
+// on the last page to prevent invalid navigation. Includes proper
+// disabled state styling and accessibility attributes.
+templ PaginationNext(props ...PaginationNextProps) {
+	{{ var p PaginationNextProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination-next",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		if p.IsDisabled {
+			disabled
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// PaginationListProps defines configuration for page number lists.
+// Use this type to configure .pagination-list elements which contain
+// the list of page numbers and ellipsis separators. Provides the
+// main page selection interface within pagination components.
+type PaginationListProps struct {
+	// Optional HTML id attribute for the pagination list
+	ID string
+
+	// List of additional CSS classes to apply to the list
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// PaginationList renders page number list containers.
+//
+// This component renders Bulma's .pagination-list class as a ul element,
+// which contains the main page selection interface with numbered links
+// and ellipsis separators. Should contain li elements with PaginationLink
+// and PaginationEllipsis components for complete functionality.
+templ PaginationList(props ...PaginationListProps) {
+	{{ var p PaginationListProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<ul
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination-list",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</ul>
+}
+
+// PaginationLinkProps defines configuration for individual page links.
+// Use this type to configure .pagination-link elements which represent
+// individual page numbers within pagination lists. Supports current
+// page indication and various interactive states for user feedback.
+type PaginationLinkProps struct {
+	// Optional HTML id attribute for the page link
+	ID string
+
+	// List of additional CSS classes to apply to the link
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Apply active state styling (hover or focus)
+	IsActive bool
+
+	// Mark as current page with distinct styling
+	IsCurrent bool
+
+	// Apply focused state styling
+	IsFocused bool
+
+	// Apply selected state styling
+	IsSelected bool
+}
+
+// PaginationLink renders individual page number links.
+//
+// This component renders Bulma's .pagination-link class as an anchor element,
+// which creates individual page numbers within pagination lists. Features
+// current page indication with IsCurrent and proper ARIA attributes for
+// accessibility. Essential for direct page navigation functionality.
+templ PaginationLink(props ...PaginationLinkProps) {
+	{{ var p PaginationLinkProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination-link",
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-current", p.IsCurrent),
+			templ.KV("is-focused", p.IsFocused),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		if p.IsCurrent {
+			aria-current="page"
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// PaginationEllipsisProps defines configuration for page range separators.
+// Use this type to configure .pagination-ellipsis elements which indicate
+// gaps between page numbers in pagination lists. Typically displays
+// three dots (...) to show omitted page ranges in large datasets.
+type PaginationEllipsisProps struct {
+	// Optional HTML id attribute for the ellipsis
+	ID string
+
+	// List of additional CSS classes to apply to the ellipsis
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// PaginationEllipsis renders page range gap indicators.
+//
+// This component renders Bulma's .pagination-ellipsis class as a span element,
+// which creates visual indicators for gaps between page numbers. Typically
+// displays three dots (...) to represent omitted page ranges in large
+// datasets. Essential for compact pagination display with many pages.
+templ PaginationEllipsis(props ...PaginationEllipsisProps) {
+	{{ var p PaginationEllipsisProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"pagination-ellipsis",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}

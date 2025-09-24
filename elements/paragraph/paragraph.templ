@@ -1,0 +1,79 @@
+package paragraph
+
+import "strings"
+
+// Size represents Bulma text size modifiers
+type Size string
+
+const (
+	IsSize1 Size = "is-size-1" // 3rem
+	IsSize2 Size = "is-size-2" // 2.5rem
+	IsSize3 Size = "is-size-3" // 2rem
+	IsSize4 Size = "is-size-4" // 1.5rem
+	IsSize5 Size = "is-size-5" // 1.25rem
+	IsSize6 Size = "is-size-6" // 1rem
+	IsSize7 Size = "is-size-7" // 0.75rem
+)
+
+// TextColor represents Bulma text color modifiers
+type TextColor string
+
+const (
+	HasTextPrimary TextColor = "has-text-primary"
+	HasTextInfo    TextColor = "has-text-info"
+	HasTextSuccess TextColor = "has-text-success"
+	HasTextWarning TextColor = "has-text-warning"
+	HasTextDanger  TextColor = "has-text-danger"
+	HasTextDark    TextColor = "has-text-dark"
+	HasTextLight   TextColor = "has-text-light"
+)
+
+// ParagraphProps defines properties for paragraph elements.
+// Supports Bulma typography helpers for consistent text styling.
+type ParagraphProps struct {
+	// Optional HTML id attribute for the paragraph
+	ID string
+	// List of additional CSS classes to apply to the paragraph
+	Class []string
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+	// Bulma text size modifier
+	Size Size
+	// Bulma text color modifier
+	TextColor TextColor
+}
+
+// Paragraph generates HTML paragraph elements with Bulma typography support.
+// Provides consistent text styling through size and color modifiers.
+// Only outputs classes when corresponding properties are provided.
+templ Paragraph(props ...ParagraphProps) {
+	{{ var p ParagraphProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	// Build class string only if we have classes to add
+	{{ var classes []string }}
+	{{if p.Size != "" {
+	classes = append(classes, string(p.Size))
+}
+	}}
+	{{if p.TextColor != "" {
+	classes = append(classes, string(p.TextColor))
+}
+	}}
+	{{if len(p.Class) > 0 {
+	classes = append(classes, p.Class...)
+}
+	}}
+	<p
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if len(classes) > 0 {
+			class={ strings.Join(classes, " ") }
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</p>
+}

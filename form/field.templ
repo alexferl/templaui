@@ -1,0 +1,173 @@
+package form
+
+import "strings"
+
+// FieldProps defines configuration for form field containers.
+//
+// Use this type to configure Bulma .field elements which serve as
+// containers for form controls, labels, and help text. Fields provide
+// spacing, grouping, and layout options including horizontal layouts,
+// grouped controls, and attached addons. Essential wrapper for all
+// form elements to ensure proper spacing and visual organization.
+type FieldProps struct {
+	// Optional HTML id attribute for the field container
+	ID string
+
+	// List of additional CSS classes to apply to the field
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Group controls horizontally in a single row
+	IsGrouped bool
+
+	// Center align grouped controls horizontally
+	IsGroupedCentered bool
+
+	// Right align grouped controls horizontally
+	IsGroupedRight bool
+
+	// Allow grouped controls to wrap to multiple lines
+	IsGroupedMultiline bool
+
+	// Attach controls together without gaps (button groups, input addons)
+	HasAddons bool
+
+	// Center align attached addon controls
+	HasAddonsCentered bool
+
+	// Right align attached addon controls
+	HasAddonsRight bool
+
+	// Use horizontal form layout with side labels
+	IsHorizontal bool
+}
+
+// Field renders containers for form field layouts.
+//
+// This component renders Bulma's .field class which serves as the
+// universal container for form controls, labels, and help text.
+// Provides automatic spacing between fields and supports various
+// layout options including horizontal forms, grouped controls,
+// and attached addons. Essential wrapper that should contain
+// Control components and related form elements.
+templ Field(props ...FieldProps) {
+	{{ var p FieldProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{
+	// Logic: grouped modifiers imply base grouped class
+	hasGrouped := p.IsGrouped || p.IsGroupedCentered || p.IsGroupedRight || p.IsGroupedMultiline
+	// Logic: addons modifiers imply base addons class
+	hasAddons := p.HasAddons || p.HasAddonsCentered || p.HasAddonsRight
+	}}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"field",
+			templ.KV("is-grouped", hasGrouped),
+			templ.KV("is-grouped-centered", p.IsGroupedCentered),
+			templ.KV("is-grouped-right", p.IsGroupedRight),
+			templ.KV("is-grouped-multiline", p.IsGroupedMultiline),
+			templ.KV("has-addons", hasAddons),
+			templ.KV("has-addons-centered", p.HasAddonsCentered),
+			templ.KV("has-addons-right", p.HasAddonsRight),
+			templ.KV("is-horizontal", p.IsHorizontal),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// FieldLabelProps defines configuration for horizontal form labels.
+// Use this type to configure .field-label elements which provide
+// side labels for horizontal form layouts. Only used within
+// horizontal fields and supports size modifiers for vertical
+// alignment with differently sized form controls.
+type FieldLabelProps struct {
+	// Optional HTML id attribute for the field label container
+	ID string
+
+	// List of additional CSS classes to apply to the label container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Size modifier for vertical alignment with form controls
+	Size Size
+}
+
+// FieldLabel renders side labels for horizontal form layouts.
+//
+// This component renders Bulma's .field-label class which creates
+// side labels for horizontal form layouts. Should only be used
+// within horizontal fields and typically contains a label element.
+// Size modifiers ensure proper vertical alignment with different
+// sized form controls.
+templ FieldLabel(props ...FieldLabelProps) {
+	{{ var p FieldLabelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"field-label",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// FieldBodyProps defines configuration for horizontal form control areas.
+// Use this type to configure .field-body elements which contain
+// the form controls within horizontal field layouts. Provides
+// the main content area alongside field labels in horizontal forms.
+type FieldBodyProps struct {
+	// Optional HTML id attribute for the field body container
+	ID string
+
+	// List of additional CSS classes to apply to the body container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// FieldBody renders control containers for horizontal form layouts.
+//
+// This component renders Bulma's .field-body class which creates
+// the main content area for form controls in horizontal layouts.
+// Should only be used within horizontal fields and contains the
+// actual form controls and related elements. Provides flexible
+// width allocation alongside field labels.
+templ FieldBody(props ...FieldBodyProps) {
+	{{ var p FieldBodyProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"field-body",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

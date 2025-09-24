@@ -1,0 +1,35 @@
+package div
+
+import "strings"
+
+// DivProps defines properties for HTML div elements.
+// Provides a flexible container element with Bulma integration and custom styling support.
+type DivProps struct {
+	// Optional HTML id attribute for the div
+	ID string
+	// List of additional CSS classes to apply to the div
+	Class []string
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Div generates HTML div elements with configurable styling and attributes.
+// Serves as a generic container component for layout and content organization.
+// Supports all standard div use cases with clean class composition.
+templ Div(props ...DivProps) {
+	{{ var p DivProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if len(p.Class) > 0 {
+			class={ strings.Join(p.Class, " ") }
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

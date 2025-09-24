@@ -1,0 +1,91 @@
+package form
+
+import "strings"
+
+// FieldsetProps defines configuration for form section grouping containers.
+//
+// Use this type to configure HTML fieldset elements which provide
+// semantic grouping of related form controls. Essential for accessibility
+// as they create logical relationships between controls that screen readers
+// can announce. The disabled attribute affects all contained form controls.
+// Should be paired with Legend elements for proper labeling.
+type FieldsetProps struct {
+	// Optional HTML id attribute for the fieldset element
+	ID string
+
+	// List of additional CSS classes to apply to the fieldset
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Disable all form controls contained within this fieldset
+	Disabled bool
+}
+
+// Fieldset renders semantic grouping containers for related form controls.
+//
+// This component renders HTML fieldset elements which provide both visual
+// and semantic grouping of related form controls. Essential for accessibility
+// as screen readers use fieldsets to understand form structure and announce
+// group context. The disabled attribute cascades to all contained controls.
+// Should contain a Legend component as the first child for proper labeling.
+// Perfect for grouping radio buttons, checkboxes, or thematically related fields.
+templ Fieldset(props ...FieldsetProps) {
+	{{ var p FieldsetProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<fieldset
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Disabled {
+			disabled
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</fieldset>
+}
+
+// LegendProps defines configuration for fieldset caption elements.
+// Use this type to configure HTML legend elements which provide
+// accessible names and descriptions for fieldset groups. The legend
+// must be the first child of a fieldset to maintain proper semantic
+// relationships for assistive technologies.
+type LegendProps struct {
+	// Optional HTML id attribute for the legend element
+	ID string
+
+	// List of additional CSS classes to apply to the legend
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Legend renders captions and labels for fieldset groups.
+//
+// This component renders HTML legend elements which serve as accessible
+// names for fieldset groups. The legend provides context that screen readers
+// announce when users navigate into the fieldset, helping them understand
+// the purpose of the grouped controls. Must be the first child of its
+// parent fieldset to maintain semantic relationships. Keep text concise
+// as it may be announced with each form control in the group.
+templ Legend(props ...LegendProps) {
+	{{ var p LegendProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<legend
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</legend>
+}

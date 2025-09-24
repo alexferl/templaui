@@ -1,0 +1,75 @@
+package form
+
+import "strings"
+
+// FormProps defines configuration for HTML form elements.
+//
+// Use this type to configure HTML form elements which define document
+// sections containing interactive controls for submitting information.
+// Forms handle user input collection and submission with various HTTP
+// methods, encoding types, and validation options. Should contain
+// Field components with Control and input elements for proper structure.
+type FormProps struct {
+	// Optional HTML id attribute for the form element
+	ID string
+
+	// List of additional CSS classes to apply to the form
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// URL where form data is sent when submitted
+	Action string
+
+	// HTTP method for form submission (GET, POST, PUT, DELETE, etc.)
+	Method string
+
+	// MIME type for encoding form data (multipart/form-data, application/x-www-form-urlencoded)
+	Enctype string
+
+	// Target window or frame for form submission response (_blank, _self, etc.)
+	Target string
+
+	// Disable browser's built-in HTML5 form validation
+	NoValidate bool
+}
+
+// Form renders HTML form elements for user input collection.
+//
+// This component renders HTML form elements which create document sections
+// for collecting and submitting user information. Supports various HTTP
+// methods, encoding types for file uploads, and validation control.
+// Should contain Field components with Control wrappers around input
+// elements for proper Bulma form styling and layout. Essential container
+// for all interactive form functionality and data submission.
+templ Form(props ...FormProps) {
+	{{ var p FormProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<form
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Action != "" {
+			action={ p.Action }
+		}
+		if p.Method != "" {
+			method={ p.Method }
+		}
+		if p.Enctype != "" {
+			enctype={ p.Enctype }
+		}
+		if p.Target != "" {
+			target={ p.Target }
+		}
+		if p.NoValidate {
+			novalidate
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</form>
+}

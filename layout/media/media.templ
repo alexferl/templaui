@@ -1,0 +1,179 @@
+package media
+
+import "strings"
+
+// MediaProps defines configuration for media object containers.
+//
+// Use this type to configure Bulma .media elements which create
+// the famous media object layout prevalent in social media interfaces.
+// Perfect for comment threads, user profiles, product listings,
+// and any content requiring image/avatar alongside descriptive text.
+// Supports nesting for threaded conversations and reply structures.
+type MediaProps struct {
+	// Optional HTML id attribute for the media object container
+	ID string
+
+	// List of additional CSS classes to apply to the media object
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Increase spacing around media object for prominent display
+	IsLarge bool
+}
+
+// Media renders flexible media object containers for content layouts.
+//
+// This component renders Bulma's .media class as an article element,
+// which creates the versatile media object pattern perfect for social
+// media interfaces, comment systems, and content listings. Must contain
+// MediaContent as the main text area, with optional MediaLeft and
+// MediaRight for images, avatars, or actions. Supports infinite nesting
+// for threaded conversations and hierarchical content structures.
+templ Media(props ...MediaProps) {
+	{{ var p MediaProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<article
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"media",
+			templ.KV("is-large", p.IsLarge),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</article>
+}
+
+// MediaLeftProps defines configuration for left media object sections.
+// Use this type to configure .media-left elements which contain
+// images, avatars, or icons positioned on the left side of media
+// objects. Typically holds user profile pictures, product images,
+// or status indicators that should remain fixed in position.
+type MediaLeftProps struct {
+	// Optional HTML id attribute for the media left section
+	ID string
+
+	// List of additional CSS classes to apply to the left section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MediaLeft renders left-positioned sections for media objects.
+//
+// This component renders Bulma's .media-left class which creates
+// fixed-width sections on the left side of media objects. Perfect
+// for user avatars, product thumbnails, status icons, or any visual
+// element that should remain consistently positioned and sized.
+// Content flows around this fixed section automatically.
+templ MediaLeft(props ...MediaLeftProps) {
+	{{ var p MediaLeftProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"media-left",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// MediaContentProps defines configuration for main media object content.
+// Use this type to configure .media-content elements which contain
+// the primary content of media objects. This flexible section expands
+// to fill available space between left and right media sections.
+// Essential component for all media object implementations.
+type MediaContentProps struct {
+	// Optional HTML id attribute for the media content section
+	ID string
+
+	// List of additional CSS classes to apply to the content section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MediaContent renders main content sections for media objects.
+//
+// This component renders Bulma's .media-content class which creates
+// the flexible main content area that expands to fill available space.
+// Contains titles, text, forms, buttons, or any primary content.
+// Essential for all media objects and can contain nested media objects
+// for threaded conversations. Automatically adjusts width based on
+// presence of left and right media sections.
+templ MediaContent(props ...MediaContentProps) {
+	{{ var p MediaContentProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"media-content",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// MediaRightProps defines configuration for right media object sections.
+// Use this type to configure .media-right elements which contain
+// actions, metadata, or secondary content positioned on the right
+// side of media objects. Often used for timestamps, action buttons,
+// delete controls, or status indicators.
+type MediaRightProps struct {
+	// Optional HTML id attribute for the media right section
+	ID string
+
+	// List of additional CSS classes to apply to the right section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MediaRight renders right-positioned sections for media objects.
+//
+// This component renders Bulma's .media-right class which creates
+// fixed-width sections on the right side of media objects. Perfect
+// for action buttons, timestamps, delete controls, or metadata that
+// should remain consistently positioned. Content flows around this
+// fixed section automatically while maintaining right alignment.
+templ MediaRight(props ...MediaRightProps) {
+	{{ var p MediaRightProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"media-right",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

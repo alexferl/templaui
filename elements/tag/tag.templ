@@ -1,0 +1,288 @@
+package tag
+
+import "strings"
+
+// Size represents tag size modifiers
+type Size string
+
+const (
+	IsNormal Size = "is-normal" // Normal tag size (default, 1.5rem height)
+	IsMedium Size = "is-medium" // Medium tag size
+	IsLarge  Size = "is-large"  // Large tag size
+)
+
+// Color represents tag color variants
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black tag
+	IsDanger  Color = "is-danger"  // Danger/error tag (red)
+	IsDark    Color = "is-dark"    // Dark tag
+	IsInfo    Color = "is-info"    // Info tag (blue)
+	IsLight   Color = "is-light"   // Light tag
+	IsLink    Color = "is-link"    // Link-style tag
+	IsPrimary Color = "is-primary" // Primary tag (brand color)
+	IsSuccess Color = "is-success" // Success tag (green)
+	IsText    Color = "is-text"    // Text-only tag
+	IsWarning Color = "is-warning" // Warning tag (yellow)
+	IsWhite   Color = "is-white"   // White tag
+)
+
+// TagsSize represents size modifiers for tag groups
+type TagsSize string
+
+const (
+	AreMedium TagsSize = "are-medium" // All tags in group are medium
+	AreLarge  TagsSize = "are-large"  // All tags in group are large
+)
+
+// Alignment represents tag group alignment options
+type Alignment string
+
+const (
+	IsCentered Alignment = "is-centered" // Center align tags in group
+	IsRight    Alignment = "is-right"    // Right align tags in group
+)
+
+// TagProps defines configuration for individual tag elements.
+//
+// Use this type to configure Bulma .tag elements which are small
+// versatile labels for attaching information to blocks or components.
+// Perfect for categories, status indicators, labels, and metadata.
+// Can render as span, anchor, or button elements with various styling.
+type TagProps struct {
+	// Optional HTML id attribute for the tag
+	ID string
+
+	// List of additional CSS classes to apply to the tag
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Tag color variant (primary, success, danger, etc.)
+	Color Color
+
+	// Use light version of the selected color
+	IsLightVariant bool
+
+	// Render as <a> element instead of <span>
+	IsAnchor bool
+
+	// Render as <button> element instead of <span>
+	IsButton bool
+
+	// Include a delete button inside the tag for removal
+	HasDelete bool
+
+	// Custom aria-label for delete button (defaults to "Remove tag")
+	DeleteAriaLabel string
+
+	// Tag size (normal, medium, large)
+	Size Size
+
+	// Enable hover effect on non-interactive tags
+	IsHoverable bool
+
+	// Style tag as a delete button (no content, just X icon)
+	IsDelete bool
+
+	// Apply rounded corners to the tag
+	IsRounded bool
+}
+
+// Tag renders individual tag elements.
+//
+// This component renders Bulma's .tag class which creates small
+// versatile labels perfect for categories, status indicators, and
+// metadata. Can render as span (default), anchor, or button elements
+// with extensive styling options including colors, sizes, and states.
+// Supports interactive features like hover effects and delete functionality.
+templ Tag(props ...TagProps) {
+	{{ var p TagProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	if p.IsButton {
+		<button
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Color == IsLight {
+				class={
+					"tag",
+					"is-light",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			} else {
+				class={
+					"tag",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV(string(p.Color), p.Color != ""),
+					templ.KV("is-light", p.IsLightVariant),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			}
+			{ p.Attributes... }
+		>
+			if !p.IsDelete {
+				{ children... }
+			}
+			if p.HasDelete {
+				<button
+					class="delete is-small"
+					if p.DeleteAriaLabel != "" {
+						aria-label={ p.DeleteAriaLabel }
+					} else {
+						aria-label="Remove tag"
+					}
+				></button>
+			}
+		</button>
+	} else if p.IsAnchor {
+		<a
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Color == IsLight {
+				class={
+					"tag",
+					"is-light",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			} else {
+				class={
+					"tag",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV(string(p.Color), p.Color != ""),
+					templ.KV("is-light", p.IsLightVariant),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			}
+			{ p.Attributes... }
+		>
+			if !p.IsDelete {
+				{ children... }
+			}
+			if p.HasDelete {
+				<button
+					class="delete is-small"
+					if p.DeleteAriaLabel != "" {
+						aria-label={ p.DeleteAriaLabel }
+					} else {
+						aria-label="Remove tag"
+					}
+				></button>
+			}
+		</a>
+	} else {
+		<span
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Color == IsLight {
+				class={
+					"tag",
+					"is-light",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			} else {
+				class={
+					"tag",
+					templ.KV(string(p.Size), p.Size != ""),
+					templ.KV(string(p.Color), p.Color != ""),
+					templ.KV("is-light", p.IsLightVariant),
+					templ.KV("is-delete", p.IsDelete),
+					templ.KV("is-rounded", p.IsRounded),
+					templ.KV("is-hoverable", p.IsHoverable),
+					templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+				}
+			}
+			{ p.Attributes... }
+		>
+			if !p.IsDelete {
+				{ children... }
+			}
+			if p.HasDelete {
+				<button
+					class="delete is-small"
+					if p.DeleteAriaLabel != "" {
+						aria-label={ p.DeleteAriaLabel }
+					} else {
+						aria-label="Remove tag"
+					}
+				></button>
+			}
+		</span>
+	}
+}
+
+// TagsProps defines configuration for tag group containers.
+// Use this type to configure Bulma .tags elements which group
+// multiple tag elements together with consistent spacing, alignment,
+// and sizing. Supports addon connections for seamless tag grouping.
+type TagsProps struct {
+	// Optional HTML id attribute for the tag group
+	ID string
+
+	// List of additional CSS classes to apply to the group
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Horizontal alignment of tags within the group
+	Alignment Alignment
+
+	// Uniform size for all tags in the group
+	Size TagsSize
+
+	// Connect tags together without gaps (addon style)
+	HasAddons bool
+}
+
+// Tags renders container for multiple tag elements.
+//
+// This component renders Bulma's .tags class which groups multiple
+// tag elements together with consistent spacing and alignment.
+// Supports uniform sizing, alignment options, and addon connections
+// for creating cohesive tag collections and tag lists.
+templ Tags(props ...TagsProps) {
+	{{ var p TagsProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"tags",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Alignment), p.Alignment != ""),
+			templ.KV("has-addons", p.HasAddons),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

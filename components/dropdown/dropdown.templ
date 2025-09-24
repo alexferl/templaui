@@ -1,0 +1,267 @@
+package dropdown
+
+import "strings"
+
+// DropdownProps defines configuration for dropdown container elements.
+//
+// Use this type to configure Bulma .dropdown elements which create
+// interactive dropdown menus for discoverable content. Dropdowns are
+// composite components requiring trigger, menu, content, and item
+// sub-components. Supports click-to-toggle or hover activation.
+type DropdownProps struct {
+	// Optional HTML id attribute for the dropdown container
+	ID string
+
+	// List of additional CSS classes to apply to the dropdown
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Right align the dropdown menu instead of left
+	IsRight bool
+
+	// Show dropdown menu (for programmatic control)
+	IsActive bool
+
+	// Enable hover activation instead of click
+	IsHoverable bool
+
+	// Apply selected styling to the dropdown
+	IsSelected bool
+
+	// Show dropdown menu above trigger (dropup)
+	IsUp bool
+}
+
+// Dropdown renders the main dropdown container.
+//
+// This component renders Bulma's .dropdown class which creates the
+// main container for interactive dropdown menus. By default requires
+// JavaScript for click activation unless IsHoverable is used. Contains
+// DropdownTrigger and DropdownMenu components. Perfect for navigation
+// menus, action lists, and contextual options.
+templ Dropdown(props ...DropdownProps) {
+	{{ var p DropdownProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown",
+			templ.KV("is-right", p.IsRight),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-hoverable", p.IsHoverable),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV("is-up", p.IsUp),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// DropdownTriggerProps defines configuration for dropdown trigger containers.
+// Use this type to configure .dropdown-trigger elements which contain
+// the button or element that activates the dropdown menu. Typically
+// contains a button with appropriate ARIA attributes for accessibility.
+type DropdownTriggerProps struct {
+	// Optional HTML id attribute for the dropdown trigger
+	ID string
+
+	// List of additional CSS classes to apply to the trigger container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// DropdownTrigger renders dropdown activation triggers.
+//
+// This component renders Bulma's .dropdown-trigger class as a div element,
+// which contains the button that activates the dropdown. Should contain
+// a button element with proper ARIA attributes (aria-haspopup, aria-controls).
+templ DropdownTrigger(props ...DropdownTriggerProps) {
+	{{ var p DropdownTriggerProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown-trigger",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// DropdownMenuProps defines configuration for dropdown menu containers.
+// Use this type to configure .dropdown-menu elements which provide
+// the toggleable menu container. Hidden by default and shown when
+// dropdown becomes active. Should contain DropdownContent component.
+type DropdownMenuProps struct {
+	// Optional HTML id attribute for the dropdown menu
+	ID string
+
+	// List of additional CSS classes to apply to the menu container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// DropdownMenu renders dropdown menu containers.
+//
+// This component renders Bulma's .dropdown-menu class as a div element,
+// which creates the toggleable menu container. Hidden by default and
+// positioned absolutely when activated. Should have role="menu" and
+// contain DropdownContent component with menu items.
+templ DropdownMenu(props ...DropdownMenuProps) {
+	{{ var p DropdownMenuProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown-menu",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// DropdownContentProps defines configuration for dropdown content areas.
+// Use this type to configure .dropdown-content elements which provide
+// the styled container for dropdown items. Features white background,
+// shadow, and border radius. Contains DropdownItem components.
+type DropdownContentProps struct {
+	// Optional HTML id attribute for the dropdown content
+	ID string
+
+	// List of additional CSS classes to apply to the content container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// DropdownContent renders dropdown content containers.
+//
+// This component renders Bulma's .dropdown-content class as a div element,
+// which creates the white background container with shadow and border radius.
+// Contains the actual dropdown items and dividers. Essential for proper
+// dropdown styling and visual separation from page content.
+templ DropdownContent(props ...DropdownContentProps) {
+	{{ var p DropdownContentProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown-content",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// DropdownItemProps defines configuration for individual dropdown items.
+// Use this type to configure .dropdown-item elements which represent
+// individual selectable options within dropdown menus. Can function
+// as links or interactive elements with hover and active states.
+type DropdownItemProps struct {
+	// Optional HTML id attribute for the dropdown item
+	ID string
+
+	// List of additional CSS classes to apply to the item
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Mark item as currently active/selected
+	IsActive bool
+}
+
+// DropdownItem renders individual dropdown menu items.
+//
+// This component renders Bulma's .dropdown-item class as an anchor element,
+// which creates individual selectable items within dropdown content.
+// Features hover effects and active state styling. Can contain text,
+// icons, or other inline content for menu options.
+templ DropdownItem(props ...DropdownItemProps) {
+	{{ var p DropdownItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown-item",
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// DropdownDividerProps defines configuration for dropdown dividers.
+// Use this type to configure .dropdown-divider elements which provide
+// horizontal separator lines between groups of dropdown items.
+// Helps organize menu items into logical sections.
+type DropdownDividerProps struct {
+	// Optional HTML id attribute for the dropdown divider
+	ID string
+
+	// List of additional CSS classes to apply to the divider
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// DropdownDivider renders horizontal separator lines.
+//
+// This component renders Bulma's .dropdown-divider class as an hr element,
+// which creates horizontal separator lines between dropdown items.
+// Perfect for organizing menu items into logical groups and
+// improving visual hierarchy within dropdown content.
+templ DropdownDivider(props ...DropdownDividerProps) {
+	{{ var p DropdownDividerProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<hr
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"dropdown-divider",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	/>
+}

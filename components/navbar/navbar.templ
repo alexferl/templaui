@@ -1,0 +1,565 @@
+package navbar
+
+import "strings"
+
+// Color represents navbar background color variants
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black navbar background
+	IsDanger  Color = "is-danger"  // Danger/error navbar (red)
+	IsDark    Color = "is-dark"    // Dark navbar background
+	IsInfo    Color = "is-info"    // Info navbar (blue)
+	IsLight   Color = "is-light"   // Light navbar background
+	IsLink    Color = "is-link"    // Link-style navbar
+	IsPrimary Color = "is-primary" // Primary navbar (brand color)
+	IsSuccess Color = "is-success" // Success navbar (green)
+	IsText    Color = "is-text"    // Text-only navbar
+	IsWarning Color = "is-warning" // Warning navbar (yellow)
+	IsWhite   Color = "is-white"   // White navbar background
+)
+
+// Fixed represents navbar fixed positioning options
+type Fixed string
+
+const (
+	FixedTop    Fixed = "is-fixed-top"    // Fix navbar to top of viewport
+	FixedBottom Fixed = "is-fixed-bottom" // Fix navbar to bottom of viewport
+)
+
+// FixedResponsive represents responsive navbar fixed positioning
+type FixedResponsive string
+
+const (
+	FixedTopDesktop    FixedResponsive = "is-fixed-top-desktop"    // Fix to top on desktop only
+	FixedBottomDesktop FixedResponsive = "is-fixed-bottom-desktop" // Fix to bottom on desktop only
+	FixedTopTouch      FixedResponsive = "is-fixed-top-touch"      // Fix to top on touch devices
+	FixedBottomTouch   FixedResponsive = "is-fixed-bottom-touch"   // Fix to bottom on touch devices
+)
+
+// DropdownDirection represents navbar dropdown direction options
+type DropdownDirection string
+
+const (
+	HasDropdown   DropdownDirection = "has-dropdown"    // Enable dropdown (downward)
+	HasDropdownUp DropdownDirection = "has-dropdown-up" // Enable dropdown (upward)
+)
+
+// NavbarProps defines configuration for navbar container elements.
+//
+// Use this type to configure Bulma .navbar elements which create
+// responsive horizontal navigation bars. Features brand section,
+// mobile burger menu, and flexible start/end content areas.
+// Perfect for site navigation with logo, links, and user controls.
+type NavbarProps struct {
+	// Optional HTML id attribute for the navbar
+	ID string
+
+	// List of additional CSS classes to apply to the navbar
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Accessible label for screen readers (useful for multiple navbars)
+	AriaLabel string
+
+	// Background color variant for the navbar
+	Color Color
+
+	// Dropdown menu direction (down or up)
+	DropdownDirection DropdownDirection
+
+	// Fixed positioning to top or bottom of viewport
+	Fixed Fixed
+
+	// Responsive fixed positioning for specific breakpoints
+	FixedResponsive FixedResponsive
+
+	// Add extra vertical padding to navbar
+	IsSpaced bool
+
+	// Add subtle shadow below navbar
+	HasShadow bool
+
+	// Add boxed styling with rounded corners
+	IsBoxed bool
+
+	// Make navbar background transparent
+	IsTransparent bool
+
+	// Align navbar content to the right
+	IsRight bool
+
+	// Apply active state styling to navbar
+	IsActive bool
+
+	// Expand mobile menu (controlled by JavaScript)
+	IsExpanded bool
+
+	// Enable hover effects on navbar items
+	IsHoverable bool
+
+	// Apply selected state styling to navbar
+	IsSelected bool
+}
+
+// Navbar renders responsive horizontal navigation bars.
+//
+// This component renders Bulma's .navbar class as a nav element,
+// which creates responsive horizontal navigation bars with brand
+// section, mobile burger menu, and flexible content areas. Requires
+// JavaScript for mobile menu toggle functionality. Essential for
+// site navigation with proper accessibility attributes.
+templ Navbar(props ...NavbarProps) {
+	{{ var p NavbarProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<nav
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		class={
+			"navbar",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Fixed), p.Fixed != ""),
+			templ.KV(string(p.FixedResponsive), p.FixedResponsive != ""),
+			templ.KV(string(p.DropdownDirection), p.DropdownDirection != ""),
+			templ.KV("is-spaced", p.IsSpaced),
+			templ.KV("has-shadow", p.HasShadow),
+			templ.KV("is-boxed", p.IsBoxed),
+			templ.KV("is-transparent", p.IsTransparent),
+			templ.KV("is-right", p.IsRight),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-expanded", p.IsExpanded),
+			templ.KV("is-hoverable", p.IsHoverable),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		role="navigation"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</nav>
+}
+
+// NavbarBrandProps defines configuration for navbar brand sections.
+// Use this type to configure .navbar-brand elements which contain
+// the left side of navbars that's always visible. Typically contains
+// logos, brand names, and optional links or icons.
+type NavbarBrandProps struct {
+	// Optional HTML id attribute for the brand section
+	ID string
+
+	// List of additional CSS classes to apply to the brand
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// NavbarBrand renders navbar brand sections.
+//
+// This component renders Bulma's .navbar-brand class which creates
+// the left side of navbars that remains visible on all screen sizes.
+// Typically contains logos, brand names, and essential navigation
+// elements. Always visible regardless of mobile menu state.
+templ NavbarBrand(props ...NavbarBrandProps) {
+	{{ var p NavbarBrandProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-brand",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarBurgerProps defines configuration for mobile hamburger menu buttons.
+// Use this type to configure .navbar-burger elements which provide
+// the hamburger icon for toggling mobile navigation menus. Includes
+// proper ARIA attributes for accessibility and JavaScript control.
+type NavbarBurgerProps struct {
+	// Optional HTML id attribute for the burger button
+	ID string
+
+	// List of additional CSS classes to apply to the burger
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Show active state (menu is open)
+	IsActive bool
+}
+
+// NavbarBurger renders mobile hamburger menu toggles.
+//
+// This component renders Bulma's .navbar-burger class as an anchor element,
+// which creates the hamburger icon for mobile menu toggling. Includes
+// proper ARIA attributes for accessibility and controls the navbar menu
+// visibility on mobile devices through JavaScript interaction.
+templ NavbarBurger(props ...NavbarBurgerProps) {
+	{{ var p NavbarBurgerProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-burger",
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		role="button"
+		aria-label="menu"
+		if p.IsActive {
+			aria-expanded="true"
+		} else {
+			aria-expanded="false"
+		}
+		aria-controls="navbar-menu"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// NavbarMenuProps defines configuration for collapsible navbar menus.
+// Use this type to configure .navbar-menu elements which contain
+// the main navigation content hidden on mobile and visible on desktop.
+// Controlled by navbar burger for mobile menu toggle functionality.
+type NavbarMenuProps struct {
+	// Optional HTML id attribute for the menu (defaults to "navbar-menu")
+	ID string
+
+	// List of additional CSS classes to apply to the menu
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Show menu (controlled by burger toggle on mobile)
+	IsActive bool
+}
+
+// NavbarMenu renders collapsible navigation menus.
+//
+// This component renders Bulma's .navbar-menu class which contains
+// the main navigation content. Hidden on mobile by default and
+// toggleable via navbar burger. Contains NavbarStart and NavbarEnd
+// sections for organized content layout.
+templ NavbarMenu(props ...NavbarMenuProps) {
+	{{ var p NavbarMenuProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		} else {
+			id="navbar-menu"
+		}
+		class={
+			"navbar-menu",
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		aria-labelledby="navbar-burger"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarStartProps defines configuration for left navbar content sections.
+// Use this type to configure .navbar-start elements which contain
+// the left part of navbar menus, appearing next to the brand on desktop.
+// Perfect for primary navigation links and menu items.
+type NavbarStartProps struct {
+	// Optional HTML id attribute for the start section
+	ID string
+
+	// List of additional CSS classes to apply to the start section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// NavbarStart renders left navbar content sections.
+//
+// This component renders Bulma's .navbar-start class which creates
+// the left part of navbar menus. Appears next to the brand on desktop
+// and contains primary navigation items. Essential for organizing
+// main navigation links and menu structure.
+templ NavbarStart(props ...NavbarStartProps) {
+	{{ var p NavbarStartProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-start",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarEndProps defines configuration for right navbar content sections.
+// Use this type to configure .navbar-end elements which contain
+// the right part of navbar menus, appearing at the end of navbars.
+// Perfect for user controls, login links, and secondary actions.
+type NavbarEndProps struct {
+	// Optional HTML id attribute for the end section
+	ID string
+
+	// List of additional CSS classes to apply to the end section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// NavbarEnd renders right navbar content sections.
+//
+// This component renders Bulma's .navbar-end class which creates
+// the right part of navbar menus appearing at the end of navbars.
+// Perfect for user controls, authentication links, and secondary
+// navigation actions that should be right-aligned.
+templ NavbarEnd(props ...NavbarEndProps) {
+	{{ var p NavbarEndProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-end",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarItemProps defines configuration for individual navbar items.
+// Use this type to configure .navbar-item elements which represent
+// individual navigation items. Can be links, dropdowns, or containers
+// for buttons and other content. Supports various states and styles.
+type NavbarItemProps struct {
+	// Optional HTML id attribute for the navbar item
+	ID string
+
+	// List of additional CSS classes to apply to the item
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Enable dropdown functionality (down or up direction)
+	DropdownDirection DropdownDirection
+
+	// Apply active state styling (current page/section)
+	IsActive bool
+
+	// Expand item to fill available space
+	IsExpanded bool
+
+	// Enable hover effects for dropdowns
+	IsHoverable bool
+
+	// Apply selected state styling
+	IsSelected bool
+
+	// Style item as a tab with bottom border
+	IsTab bool
+}
+
+// NavbarItem renders individual navigation items.
+//
+// This component renders Bulma's .navbar-item class which creates
+// individual navigation elements within navbar menus. Can function
+// as links, dropdown containers, or content wrappers. Supports
+// various interactive states and dropdown functionality.
+templ NavbarItem(props ...NavbarItemProps) {
+	{{ var p NavbarItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-item",
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-expanded", p.IsExpanded),
+			templ.KV("is-hoverable", p.IsHoverable),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV(string(p.DropdownDirection), p.DropdownDirection != ""),
+			templ.KV("is-tab", p.IsTab),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarLinkProps defines configuration for navbar dropdown trigger links.
+// Use this type to configure .navbar-link elements which serve as
+// clickable triggers for dropdown menus. Features arrow indicator
+// and active state styling for dropdown interaction.
+type NavbarLinkProps struct {
+	// Optional HTML id attribute for the navbar link
+	ID string
+
+	// List of additional CSS classes to apply to the link
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Apply active state styling (dropdown is open)
+	IsActive bool
+
+	// Hide the dropdown arrow indicator
+	IsArrowless bool
+}
+
+// NavbarLink renders dropdown trigger links.
+//
+// This component renders Bulma's .navbar-link class as an anchor element,
+// which creates clickable triggers for dropdown menus. Features arrow
+// indicator (unless IsArrowless) and serves as sibling to NavbarDropdown
+// components for interactive menu functionality.
+templ NavbarLink(props ...NavbarLinkProps) {
+	{{ var p NavbarLinkProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-link",
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-arrowless", p.IsArrowless),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// NavbarDropdownProps defines configuration for navbar dropdown menus.
+// Use this type to configure .navbar-dropdown elements which contain
+// dropdown menu items. Features positioning options and styling
+// variants for flexible dropdown menu layouts.
+type NavbarDropdownProps struct {
+	// Optional HTML id attribute for the dropdown menu
+	ID string
+
+	// List of additional CSS classes to apply to the dropdown
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Right align dropdown menu instead of left
+	IsRight bool
+
+	// Apply boxed styling with rounded corners and shadow
+	IsBoxed bool
+}
+
+// NavbarDropdown renders dropdown menu containers.
+//
+// This component renders Bulma's .navbar-dropdown class which creates
+// dropdown menu containers with white background and shadow. Contains
+// NavbarItem elements for individual dropdown options and NavbarDivider
+// elements for visual separation between groups.
+templ NavbarDropdown(props ...NavbarDropdownProps) {
+	{{ var p NavbarDropdownProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-dropdown",
+			templ.KV("is-right", p.IsRight),
+			templ.KV("is-boxed", p.IsBoxed),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// NavbarDividerProps defines configuration for navbar dropdown separators.
+// Use this type to configure .navbar-divider elements which provide
+// horizontal separator lines within dropdown menus. Helps organize
+// dropdown items into logical groups.
+type NavbarDividerProps struct {
+	// Optional HTML id attribute for the divider
+	ID string
+
+	// List of additional CSS classes to apply to the divider
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// NavbarDivider renders horizontal dropdown separators.
+//
+// This component renders Bulma's .navbar-divider class as an hr element,
+// which creates horizontal separator lines within navbar dropdown menus.
+// Perfect for organizing dropdown items into logical groups and
+// improving visual hierarchy within navigation menus.
+templ NavbarDivider(props ...NavbarDividerProps) {
+	{{ var p NavbarDividerProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<hr
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"navbar-divider",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	/>
+}

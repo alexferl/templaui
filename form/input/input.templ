@@ -1,0 +1,183 @@
+package input
+
+import "strings"
+
+// InputType represents HTML input type variants
+type InputType string
+
+const (
+	TypeText     InputType = "text"     // Standard text input
+	TypePassword InputType = "password" // Password input with masked characters
+	TypeEmail    InputType = "email"    // Email input with validation
+	TypeTel      InputType = "tel"      // Telephone number input
+	TypeNumber   InputType = "number"   // Numeric input with controls
+	TypeSearch   InputType = "search"   // Search input with browser enhancements
+	TypeURL      InputType = "url"      // URL input with validation
+)
+
+// Size represents input size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small input size
+	IsNormal Size = "is-normal" // Normal input size (default)
+	IsMedium Size = "is-medium" // Medium input size
+	IsLarge  Size = "is-large"  // Large input size
+)
+
+// Color represents input color state modifiers
+type Color string
+
+const (
+	IsPrimary Color = "is-primary" // Primary input color (brand)
+	IsLink    Color = "is-link"    // Link input color
+	IsInfo    Color = "is-info"    // Info input color (blue)
+	IsSuccess Color = "is-success" // Success input color (green)
+	IsWarning Color = "is-warning" // Warning input color (yellow)
+	IsDanger  Color = "is-danger"  // Danger/error input color (red)
+)
+
+// InputProps defines configuration for text input elements.
+//
+// Use this type to configure Bulma .input elements which style
+// native HTML input elements with consistent appearance across
+// browsers. Supports various input types, validation states,
+// sizes, and interactive states. Should be wrapped in .control
+// containers and .field wrappers for proper form layout.
+type InputProps struct {
+	// Optional HTML id attribute for the input element
+	ID string
+
+	// List of additional CSS classes to apply to the input
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// HTML input type (text, password, email, etc.)
+	Type InputType
+
+	// Name attribute for form submission
+	Name string
+
+	// Current value of the input
+	Value string
+
+	// Placeholder text displayed when input is empty
+	Placeholder string
+
+	// Disable input interaction
+	Disabled bool
+
+	// Make input read-only (visible but not editable)
+	Readonly bool
+
+	// Mark input as required for form validation
+	Required bool
+
+	// Minimum value (for number/date inputs)
+	Min string
+
+	// Maximum value (for number/date inputs)
+	Max string
+
+	// Step value for number inputs (increment/decrement amount)
+	Step string
+
+	// Regular expression pattern for input validation
+	Pattern string
+
+	// Autocomplete behavior hint for browsers
+	Autocomplete string
+
+	// Input size (small, normal, medium, large)
+	Size Size
+
+	// Input color state for validation feedback
+	Color Color
+
+	// Apply hover state styling
+	IsHovered bool
+
+	// Apply focused state styling
+	IsFocused bool
+
+	// Apply active state styling
+	IsActive bool
+
+	// Apply static appearance (readonly with specific styling)
+	IsStatic bool
+
+	// Apply rounded corners to the input
+	IsRounded bool
+}
+
+// Input renders styled text input elements.
+//
+// This component renders Bulma's .input class on native HTML input
+// elements, providing consistent cross-browser styling and responsive
+// design. Supports all standard HTML input types with enhanced visual
+// states for validation feedback. Should be wrapped in .control
+// containers for proper spacing and icon support, and .field
+// containers for complete form layout integration.
+templ Input(props ...InputProps) {
+	{{ var p InputProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{ inputType := string(p.Type) }}
+	if inputType == "" {
+		{{ inputType = "text" }}
+	}
+	<input
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		type={ inputType }
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		if p.Placeholder != "" {
+			placeholder={ p.Placeholder }
+		}
+		if p.Min != "" {
+			min={ p.Min }
+		}
+		if p.Max != "" {
+			max={ p.Max }
+		}
+		if p.Step != "" {
+			step={ p.Step }
+		}
+		if p.Pattern != "" {
+			pattern={ p.Pattern }
+		}
+		if p.Autocomplete != "" {
+			autocomplete={ p.Autocomplete }
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Readonly {
+			readonly
+		}
+		if p.Required {
+			required
+		}
+		class={
+			"input",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV("is-hovered", p.IsHovered),
+			templ.KV("is-focused", p.IsFocused),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-static", p.IsStatic),
+			templ.KV("is-rounded", p.IsRounded),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	/>
+}

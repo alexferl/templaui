@@ -1,0 +1,85 @@
+package notification
+
+import "strings"
+
+type Color string
+
+const (
+	IsBlack   Color = "is-black"
+	IsDanger  Color = "is-danger"
+	IsDark    Color = "is-dark"
+	IsInfo    Color = "is-info"
+	IsLight   Color = "is-light"
+	IsLink    Color = "is-link"
+	IsPrimary Color = "is-primary"
+	IsSuccess Color = "is-success"
+	IsText    Color = "is-text"
+	IsWarning Color = "is-warning"
+	IsWhite   Color = "is-white"
+)
+
+type Variant string
+
+const (
+	IsLightVariant Variant = "is-light"
+	IsDarkVariant  Variant = "is-dark"
+)
+
+type NotificationProps struct {
+	ID         string
+	Class      []string
+	Attributes templ.Attributes
+
+	// accessibility
+	Role      string // Optional ARIA role (default: "alert")
+	AriaLabel string // Optional aria-label
+
+	// color
+	Color Color
+
+	// dismissible
+	HasDelete       bool
+	DeleteAriaLabel string // Optional custom aria-label for delete button
+
+	// variant (light/dark versions of colors)
+	Variant Variant
+}
+
+templ Notification(props ...NotificationProps) {
+	{{ var p NotificationProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"notification",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Variant), p.Variant != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		if p.Role != "" {
+			role={ p.Role }
+		} else {
+			role="alert"
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		{ p.Attributes... }
+	>
+		if p.HasDelete {
+			<button
+				class="delete"
+				if p.DeleteAriaLabel != "" {
+					aria-label={ p.DeleteAriaLabel }
+				} else {
+					aria-label="Close notification"
+				}
+			></button>
+		}
+		{ children... }
+	</div>
+}

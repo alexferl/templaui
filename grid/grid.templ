@@ -1,0 +1,628 @@
+package grid
+
+import (
+	"strconv"
+	"strings"
+)
+
+// ColMin represents column minimum width values for smart grid
+type ColMin int
+
+const (
+	ColMin1  ColMin = 1  // 1.5rem minimum column width
+	ColMin2  ColMin = 2  // 3rem minimum column width
+	ColMin3  ColMin = 3  // 4.5rem minimum column width
+	ColMin4  ColMin = 4  // 6rem minimum column width
+	ColMin5  ColMin = 5  // 7.5rem minimum column width
+	ColMin6  ColMin = 6  // 9rem minimum column width
+	ColMin7  ColMin = 7  // 10.5rem minimum column width
+	ColMin8  ColMin = 8  // 12rem minimum column width
+	ColMin9  ColMin = 9  // 13.5rem minimum column width
+	ColMin10 ColMin = 10 // 15rem minimum column width
+	ColMin11 ColMin = 11 // 16.5rem minimum column width
+	ColMin12 ColMin = 12 // 18rem minimum column width
+	ColMin13 ColMin = 13 // 19.5rem minimum column width
+	ColMin14 ColMin = 14 // 21rem minimum column width
+	ColMin15 ColMin = 15 // 22.5rem minimum column width
+	ColMin16 ColMin = 16 // 24rem minimum column width
+	ColMin17 ColMin = 17 // 25.5rem minimum column width
+	ColMin18 ColMin = 18 // 27rem minimum column width
+	ColMin19 ColMin = 19 // 28.5rem minimum column width
+	ColMin20 ColMin = 20 // 30rem minimum column width
+	ColMin21 ColMin = 21 // 31.5rem minimum column width
+	ColMin22 ColMin = 22 // 33rem minimum column width
+	ColMin23 ColMin = 23 // 34.5rem minimum column width
+	ColMin24 ColMin = 24 // 36rem minimum column width
+	ColMin25 ColMin = 25 // 37.5rem minimum column width
+	ColMin26 ColMin = 26 // 39rem minimum column width
+	ColMin27 ColMin = 27 // 40.5rem minimum column width
+	ColMin28 ColMin = 28 // 42rem minimum column width
+	ColMin29 ColMin = 29 // 43.5rem minimum column width
+	ColMin30 ColMin = 30 // 45rem minimum column width
+	ColMin31 ColMin = 31 // 46.5rem minimum column width
+	ColMin32 ColMin = 32 // 48rem minimum column width
+)
+
+// FixedGridProps defines configuration for fixed column grid containers.
+//
+// Use this type to configure Bulma .fixed-grid elements which create
+// 2D grids with a fixed number of columns per row. Unlike smart grids,
+// fixed grids maintain consistent column counts regardless of content
+// width. Perfect for card layouts, image galleries, and uniform layouts.
+type FixedGridProps struct {
+	// Optional HTML id attribute for the fixed grid container
+	ID string
+
+	// List of additional CSS classes to apply to the grid
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Fixed column count (default breakpoint)
+	Cols1  bool // 1 column per row
+	Cols2  bool // 2 columns per row
+	Cols3  bool // 3 columns per row
+	Cols4  bool // 4 columns per row
+	Cols5  bool // 5 columns per row
+	Cols6  bool // 6 columns per row
+	Cols7  bool // 7 columns per row
+	Cols8  bool // 8 columns per row
+	Cols9  bool // 9 columns per row
+	Cols10 bool // 10 columns per row
+	Cols11 bool // 11 columns per row
+	Cols12 bool // 12 columns per row
+
+	// Mobile column count (max-width: 768px)
+	Cols1Mobile  bool // 1 column per row on mobile
+	Cols2Mobile  bool // 2 columns per row on mobile
+	Cols3Mobile  bool // 3 columns per row on mobile
+	Cols4Mobile  bool // 4 columns per row on mobile
+	Cols5Mobile  bool // 5 columns per row on mobile
+	Cols6Mobile  bool // 6 columns per row on mobile
+	Cols7Mobile  bool // 7 columns per row on mobile
+	Cols8Mobile  bool // 8 columns per row on mobile
+	Cols9Mobile  bool // 9 columns per row on mobile
+	Cols10Mobile bool // 10 columns per row on mobile
+	Cols11Mobile bool // 11 columns per row on mobile
+	Cols12Mobile bool // 12 columns per row on mobile
+
+	// Tablet column count (min-width: 769px)
+	Cols1Tablet  bool // 1 column per row on tablet
+	Cols2Tablet  bool // 2 columns per row on tablet
+	Cols3Tablet  bool // 3 columns per row on tablet
+	Cols4Tablet  bool // 4 columns per row on tablet
+	Cols5Tablet  bool // 5 columns per row on tablet
+	Cols6Tablet  bool // 6 columns per row on tablet
+	Cols7Tablet  bool // 7 columns per row on tablet
+	Cols8Tablet  bool // 8 columns per row on tablet
+	Cols9Tablet  bool // 9 columns per row on tablet
+	Cols10Tablet bool // 10 columns per row on tablet
+	Cols11Tablet bool // 11 columns per row on tablet
+	Cols12Tablet bool // 12 columns per row on tablet
+
+	// Desktop column count (min-width: 1024px)
+	Cols1Desktop  bool // 1 column per row on desktop
+	Cols2Desktop  bool // 2 columns per row on desktop
+	Cols3Desktop  bool // 3 columns per row on desktop
+	Cols4Desktop  bool // 4 columns per row on desktop
+	Cols5Desktop  bool // 5 columns per row on desktop
+	Cols6Desktop  bool // 6 columns per row on desktop
+	Cols7Desktop  bool // 7 columns per row on desktop
+	Cols8Desktop  bool // 8 columns per row on desktop
+	Cols9Desktop  bool // 9 columns per row on desktop
+	Cols10Desktop bool // 10 columns per row on desktop
+	Cols11Desktop bool // 11 columns per row on desktop
+	Cols12Desktop bool // 12 columns per row on desktop
+
+	// Widescreen column count (min-width: 1216px)
+	Cols1Widescreen  bool // 1 column per row on widescreen
+	Cols2Widescreen  bool // 2 columns per row on widescreen
+	Cols3Widescreen  bool // 3 columns per row on widescreen
+	Cols4Widescreen  bool // 4 columns per row on widescreen
+	Cols5Widescreen  bool // 5 columns per row on widescreen
+	Cols6Widescreen  bool // 6 columns per row on widescreen
+	Cols7Widescreen  bool // 7 columns per row on widescreen
+	Cols8Widescreen  bool // 8 columns per row on widescreen
+	Cols9Widescreen  bool // 9 columns per row on widescreen
+	Cols10Widescreen bool // 10 columns per row on widescreen
+	Cols11Widescreen bool // 11 columns per row on widescreen
+	Cols12Widescreen bool // 12 columns per row on widescreen
+
+	// FullHD column count (min-width: 1408px)
+	Cols1FullHD  bool // 1 column per row on FullHD
+	Cols2FullHD  bool // 2 columns per row on FullHD
+	Cols3FullHD  bool // 3 columns per row on FullHD
+	Cols4FullHD  bool // 4 columns per row on FullHD
+	Cols5FullHD  bool // 5 columns per row on FullHD
+	Cols6FullHD  bool // 6 columns per row on FullHD
+	Cols7FullHD  bool // 7 columns per row on FullHD
+	Cols8FullHD  bool // 8 columns per row on FullHD
+	Cols9FullHD  bool // 9 columns per row on FullHD
+	Cols10FullHD bool // 10 columns per row on FullHD
+	Cols11FullHD bool // 11 columns per row on FullHD
+	Cols12FullHD bool // 12 columns per row on FullHD
+
+	// Enable automatic column count based on content
+	HasAutoCount bool
+}
+
+// FixedGrid renders container for fixed column grid layouts.
+//
+// This component renders Bulma's .fixed-grid class which creates
+// 2D grids with a predetermined number of columns per row. Unlike
+// smart grids that adapt based on minimum column width, fixed grids
+// maintain consistent column counts. Perfect for card layouts,
+// image galleries, and uniform content displays.
+templ FixedGrid(props ...FixedGridProps) {
+	{{ var p FixedGridProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"fixed-grid",
+			templ.KV("has-1-cols", p.Cols1),
+			templ.KV("has-2-cols", p.Cols2),
+			templ.KV("has-3-cols", p.Cols3),
+			templ.KV("has-4-cols", p.Cols4),
+			templ.KV("has-5-cols", p.Cols5),
+			templ.KV("has-6-cols", p.Cols6),
+			templ.KV("has-7-cols", p.Cols7),
+			templ.KV("has-8-cols", p.Cols8),
+			templ.KV("has-9-cols", p.Cols9),
+			templ.KV("has-10-cols", p.Cols10),
+			templ.KV("has-11-cols", p.Cols11),
+			templ.KV("has-12-cols", p.Cols12),
+			templ.KV("has-1-cols-mobile", p.Cols1Mobile),
+			templ.KV("has-2-cols-mobile", p.Cols2Mobile),
+			templ.KV("has-3-cols-mobile", p.Cols3Mobile),
+			templ.KV("has-4-cols-mobile", p.Cols4Mobile),
+			templ.KV("has-5-cols-mobile", p.Cols5Mobile),
+			templ.KV("has-6-cols-mobile", p.Cols6Mobile),
+			templ.KV("has-7-cols-mobile", p.Cols7Mobile),
+			templ.KV("has-8-cols-mobile", p.Cols8Mobile),
+			templ.KV("has-9-cols-mobile", p.Cols9Mobile),
+			templ.KV("has-10-cols-mobile", p.Cols10Mobile),
+			templ.KV("has-11-cols-mobile", p.Cols11Mobile),
+			templ.KV("has-12-cols-mobile", p.Cols12Mobile),
+			templ.KV("has-1-cols-tablet", p.Cols1Tablet),
+			templ.KV("has-2-cols-tablet", p.Cols2Tablet),
+			templ.KV("has-3-cols-tablet", p.Cols3Tablet),
+			templ.KV("has-4-cols-tablet", p.Cols4Tablet),
+			templ.KV("has-5-cols-tablet", p.Cols5Tablet),
+			templ.KV("has-6-cols-tablet", p.Cols6Tablet),
+			templ.KV("has-7-cols-tablet", p.Cols7Tablet),
+			templ.KV("has-8-cols-tablet", p.Cols8Tablet),
+			templ.KV("has-9-cols-tablet", p.Cols9Tablet),
+			templ.KV("has-10-cols-tablet", p.Cols10Tablet),
+			templ.KV("has-11-cols-tablet", p.Cols11Tablet),
+			templ.KV("has-12-cols-tablet", p.Cols12Tablet),
+			templ.KV("has-1-cols-desktop", p.Cols1Desktop),
+			templ.KV("has-2-cols-desktop", p.Cols2Desktop),
+			templ.KV("has-3-cols-desktop", p.Cols3Desktop),
+			templ.KV("has-4-cols-desktop", p.Cols4Desktop),
+			templ.KV("has-5-cols-desktop", p.Cols5Desktop),
+			templ.KV("has-6-cols-desktop", p.Cols6Desktop),
+			templ.KV("has-7-cols-desktop", p.Cols7Desktop),
+			templ.KV("has-8-cols-desktop", p.Cols8Desktop),
+			templ.KV("has-9-cols-desktop", p.Cols9Desktop),
+			templ.KV("has-10-cols-desktop", p.Cols10Desktop),
+			templ.KV("has-11-cols-desktop", p.Cols11Desktop),
+			templ.KV("has-12-cols-desktop", p.Cols12Desktop),
+			templ.KV("has-1-cols-widescreen", p.Cols1Widescreen),
+			templ.KV("has-2-cols-widescreen", p.Cols2Widescreen),
+			templ.KV("has-3-cols-widescreen", p.Cols3Widescreen),
+			templ.KV("has-4-cols-widescreen", p.Cols4Widescreen),
+			templ.KV("has-5-cols-widescreen", p.Cols5Widescreen),
+			templ.KV("has-6-cols-widescreen", p.Cols6Widescreen),
+			templ.KV("has-7-cols-widescreen", p.Cols7Widescreen),
+			templ.KV("has-8-cols-widescreen", p.Cols8Widescreen),
+			templ.KV("has-9-cols-widescreen", p.Cols9Widescreen),
+			templ.KV("has-10-cols-widescreen", p.Cols10Widescreen),
+			templ.KV("has-11-cols-widescreen", p.Cols11Widescreen),
+			templ.KV("has-12-cols-widescreen", p.Cols12Widescreen),
+			templ.KV("has-1-cols-fullhd", p.Cols1FullHD),
+			templ.KV("has-2-cols-fullhd", p.Cols2FullHD),
+			templ.KV("has-3-cols-fullhd", p.Cols3FullHD),
+			templ.KV("has-4-cols-fullhd", p.Cols4FullHD),
+			templ.KV("has-5-cols-fullhd", p.Cols5FullHD),
+			templ.KV("has-6-cols-fullhd", p.Cols6FullHD),
+			templ.KV("has-7-cols-fullhd", p.Cols7FullHD),
+			templ.KV("has-8-cols-fullhd", p.Cols8FullHD),
+			templ.KV("has-9-cols-fullhd", p.Cols9FullHD),
+			templ.KV("has-10-cols-fullhd", p.Cols10FullHD),
+			templ.KV("has-11-cols-fullhd", p.Cols11FullHD),
+			templ.KV("has-12-cols-fullhd", p.Cols12FullHD),
+			templ.KV("has-auto-count", p.HasAutoCount),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// GridProps defines configuration for smart grid containers.
+// Use this type to configure Bulma .grid elements which create
+// responsive 2D grids based on minimum column width. Columns
+// automatically wrap and adjust based on available space and
+// content size. Perfect for responsive layouts and dynamic content.
+type GridProps struct {
+	// Optional HTML id attribute for the grid container
+	ID string
+
+	// List of additional CSS classes to apply to the grid
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Minimum column width (1.5rem increments)
+	ColMin ColMin
+
+	// Use auto-fill instead of auto-fit for column sizing
+	IsAutoFill bool
+}
+
+// Grid renders container for smart responsive grid layouts.
+//
+// This component renders Bulma's .grid class which creates intelligent
+// 2D grids that adapt based on minimum column width. Columns automatically
+// wrap and resize based on available space. Use ColMin to set minimum
+// column width (1.5rem increments). Perfect for responsive card layouts
+// and dynamic content that needs to adapt to screen size.
+templ Grid(props ...GridProps) {
+	{{ var p GridProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"grid",
+			templ.KV("is-col-min-1", p.ColMin == ColMin1),
+			templ.KV("is-col-min-2", p.ColMin == ColMin2),
+			templ.KV("is-col-min-3", p.ColMin == ColMin3),
+			templ.KV("is-col-min-4", p.ColMin == ColMin4),
+			templ.KV("is-col-min-5", p.ColMin == ColMin5),
+			templ.KV("is-col-min-6", p.ColMin == ColMin6),
+			templ.KV("is-col-min-7", p.ColMin == ColMin7),
+			templ.KV("is-col-min-8", p.ColMin == ColMin8),
+			templ.KV("is-col-min-9", p.ColMin == ColMin9),
+			templ.KV("is-col-min-10", p.ColMin == ColMin10),
+			templ.KV("is-col-min-11", p.ColMin == ColMin11),
+			templ.KV("is-col-min-12", p.ColMin == ColMin12),
+			templ.KV("is-col-min-13", p.ColMin == ColMin13),
+			templ.KV("is-col-min-14", p.ColMin == ColMin14),
+			templ.KV("is-col-min-15", p.ColMin == ColMin15),
+			templ.KV("is-col-min-16", p.ColMin == ColMin16),
+			templ.KV("is-col-min-17", p.ColMin == ColMin17),
+			templ.KV("is-col-min-18", p.ColMin == ColMin18),
+			templ.KV("is-col-min-19", p.ColMin == ColMin19),
+			templ.KV("is-col-min-20", p.ColMin == ColMin20),
+			templ.KV("is-col-min-21", p.ColMin == ColMin21),
+			templ.KV("is-col-min-22", p.ColMin == ColMin22),
+			templ.KV("is-col-min-23", p.ColMin == ColMin23),
+			templ.KV("is-col-min-24", p.ColMin == ColMin24),
+			templ.KV("is-col-min-25", p.ColMin == ColMin25),
+			templ.KV("is-col-min-26", p.ColMin == ColMin26),
+			templ.KV("is-col-min-27", p.ColMin == ColMin27),
+			templ.KV("is-col-min-28", p.ColMin == ColMin28),
+			templ.KV("is-col-min-29", p.ColMin == ColMin29),
+			templ.KV("is-col-min-30", p.ColMin == ColMin30),
+			templ.KV("is-col-min-31", p.ColMin == ColMin31),
+			templ.KV("is-col-min-32", p.ColMin == ColMin32),
+			templ.KV("is-auto-fill", p.IsAutoFill),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// CellProps defines configuration for individual grid cells.
+// Use this type to configure grid cells within Bulma grid containers.
+// Supports precise positioning and spanning across both columns and
+// rows with full responsive breakpoint control. Perfect for complex
+// layouts requiring specific cell placement and sizing.
+type CellProps struct {
+	// Optional HTML id attribute for the grid cell
+	ID string
+
+	// List of additional CSS classes to apply to the cell
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Column start position (1-12)
+	ColStart int
+
+	// Column end position (1-12)
+	ColEnd int
+
+	// Column end position counting from the end (1-12)
+	ColFromEnd int
+
+	// Number of columns to span (1-12)
+	ColSpan int
+
+	// Span from start to end of available columns
+	IsColStartEnd bool
+
+	// Row start position (1-12)
+	RowStart int
+
+	// Row end position (1-12)
+	RowEnd int
+
+	// Row end position counting from the end (1-12)
+	RowFromEnd int
+
+	// Number of rows to span (1-12)
+	RowSpan int
+
+	// Span from start to end of available rows
+	IsRowStartEnd bool
+
+	// Mobile column start position (max-width: 768px)
+	ColStartMobile int
+
+	// Mobile column end position
+	ColEndMobile int
+
+	// Mobile column end position counting from the end
+	ColFromEndMobile int
+
+	// Mobile number of columns to span
+	ColSpanMobile int
+
+	// Mobile row start position
+	RowStartMobile int
+
+	// Mobile row end position
+	RowEndMobile int
+
+	// Mobile row end position counting from the end
+	RowFromEndMobile int
+
+	// Mobile number of rows to span
+	RowSpanMobile int
+
+	// Tablet column start position (min-width: 769px)
+	ColStartTablet int
+
+	// Tablet column end position
+	ColEndTablet int
+
+	// Tablet column end position counting from the end
+	ColFromEndTablet int
+
+	// Tablet number of columns to span
+	ColSpanTablet int
+
+	// Tablet row start position
+	RowStartTablet int
+
+	// Tablet row end position
+	RowEndTablet int
+
+	// Tablet row end position counting from the end
+	RowFromEndTablet int
+
+	// Tablet number of rows to span
+	RowSpanTablet int
+
+	// Desktop column start position (min-width: 1024px)
+	ColStartDesktop int
+
+	// Desktop column end position
+	ColEndDesktop int
+
+	// Desktop column end position counting from the end
+	ColFromEndDesktop int
+
+	// Desktop number of columns to span
+	ColSpanDesktop int
+
+	// Desktop row start position
+	RowStartDesktop int
+
+	// Desktop row end position
+	RowEndDesktop int
+
+	// Desktop row end position counting from the end
+	RowFromEndDesktop int
+
+	// Desktop number of rows to span
+	RowSpanDesktop int
+
+	// Widescreen column start position (min-width: 1216px)
+	ColStartWidescreen int
+
+	// Widescreen column end position
+	ColEndWidescreen int
+
+	// Widescreen column end position counting from the end
+	ColFromEndWidescreen int
+
+	// Widescreen number of columns to span
+	ColSpanWidescreen int
+
+	// Widescreen row start position
+	RowStartWidescreen int
+
+	// Widescreen row end position
+	RowEndWidescreen int
+
+	// Widescreen row end position counting from the end
+	RowFromEndWidescreen int
+
+	// Widescreen number of rows to span
+	RowSpanWidescreen int
+
+	// FullHD column start position (min-width: 1408px)
+	ColStartFullHD int
+
+	// FullHD column end position
+	ColEndFullHD int
+
+	// FullHD column end position counting from the end
+	ColFromEndFullHD int
+
+	// FullHD number of columns to span
+	ColSpanFullHD int
+
+	// FullHD row start position
+	RowStartFullHD int
+
+	// FullHD row end position
+	RowEndFullHD int
+
+	// FullHD row end position counting from the end
+	RowFromEndFullHD int
+
+	// FullHD number of rows to span
+	RowSpanFullHD int
+}
+
+func formatCellClass(prefix string, value int, suffix string) (string, bool) {
+	if value >= 1 && value <= 12 {
+		if suffix == "" {
+			return prefix + "-" + strconv.Itoa(value), true
+		}
+		return prefix + "-" + strconv.Itoa(value) + "-" + suffix, true
+	}
+	return "", false
+}
+
+// Cell renders individual grid cell elements.
+//
+// This component renders grid cells with precise positioning and
+// spanning capabilities. Supports column and row positioning with
+// full responsive control across all breakpoints. Essential for
+// creating complex grid layouts with specific cell placement
+// and multi-column/row spanning requirements.
+templ Cell(props ...CellProps) {
+	{{ var p CellProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{ colStartClass, hasColStart := formatCellClass("is-col-start", p.ColStart, "") }}
+	{{ colEndClass, hasColEnd := formatCellClass("is-col-end", p.ColEnd, "") }}
+	{{ colFromEndClass, hasColFromEnd := formatCellClass("is-col-from-end", p.ColFromEnd, "") }}
+	{{ colSpanClass, hasColSpan := formatCellClass("is-col-span", p.ColSpan, "") }}
+	{{ rowStartClass, hasRowStart := formatCellClass("is-row-start", p.RowStart, "") }}
+	{{ rowEndClass, hasRowEnd := formatCellClass("is-row-end", p.RowEnd, "") }}
+	{{ rowFromEndClass, hasRowFromEnd := formatCellClass("is-row-from-end", p.RowFromEnd, "") }}
+	{{ rowSpanClass, hasRowSpan := formatCellClass("is-row-span", p.RowSpan, "") }}
+	{{ colStartMobileClass, hasColStartMobile := formatCellClass("is-col-start", p.ColStartMobile, "mobile") }}
+	{{ colEndMobileClass, hasColEndMobile := formatCellClass("is-col-end", p.ColEndMobile, "mobile") }}
+	{{ colFromEndMobileClass, hasColFromEndMobile := formatCellClass("is-col-from-end", p.ColFromEndMobile, "mobile") }}
+	{{ colSpanMobileClass, hasColSpanMobile := formatCellClass("is-col-span", p.ColSpanMobile, "mobile") }}
+	{{ rowStartMobileClass, hasRowStartMobile := formatCellClass("is-row-start", p.RowStartMobile, "mobile") }}
+	{{ rowEndMobileClass, hasRowEndMobile := formatCellClass("is-row-end", p.RowEndMobile, "mobile") }}
+	{{ rowFromEndMobileClass, hasRowFromEndMobile := formatCellClass("is-row-from-end", p.RowFromEndMobile, "mobile") }}
+	{{ rowSpanMobileClass, hasRowSpanMobile := formatCellClass("is-row-span", p.RowSpanMobile, "mobile") }}
+	{{ colStartTabletClass, hasColStartTablet := formatCellClass("is-col-start", p.ColStartTablet, "tablet") }}
+	{{ colEndTabletClass, hasColEndTablet := formatCellClass("is-col-end", p.ColEndTablet, "tablet") }}
+	{{ colFromEndTabletClass, hasColFromEndTablet := formatCellClass("is-col-from-end", p.ColFromEndTablet, "tablet") }}
+	{{ colSpanTabletClass, hasColSpanTablet := formatCellClass("is-col-span", p.ColSpanTablet, "tablet") }}
+	{{ rowStartTabletClass, hasRowStartTablet := formatCellClass("is-row-start", p.RowStartTablet, "tablet") }}
+	{{ rowEndTabletClass, hasRowEndTablet := formatCellClass("is-row-end", p.RowEndTablet, "tablet") }}
+	{{ rowFromEndTabletClass, hasRowFromEndTablet := formatCellClass("is-row-from-end", p.RowFromEndTablet, "tablet") }}
+	{{ rowSpanTabletClass, hasRowSpanTablet := formatCellClass("is-row-span", p.RowSpanTablet, "tablet") }}
+	{{ colStartDesktopClass, hasColStartDesktop := formatCellClass("is-col-start", p.ColStartDesktop, "desktop") }}
+	{{ colEndDesktopClass, hasColEndDesktop := formatCellClass("is-col-end", p.ColEndDesktop, "desktop") }}
+	{{ colFromEndDesktopClass, hasColFromEndDesktop := formatCellClass("is-col-from-end", p.ColFromEndDesktop, "desktop") }}
+	{{ colSpanDesktopClass, hasColSpanDesktop := formatCellClass("is-col-span", p.ColSpanDesktop, "desktop") }}
+	{{ rowStartDesktopClass, hasRowStartDesktop := formatCellClass("is-row-start", p.RowStartDesktop, "desktop") }}
+	{{ rowEndDesktopClass, hasRowEndDesktop := formatCellClass("is-row-end", p.RowEndDesktop, "desktop") }}
+	{{ rowFromEndDesktopClass, hasRowFromEndDesktop := formatCellClass("is-row-from-end", p.RowFromEndDesktop, "desktop") }}
+	{{ rowSpanDesktopClass, hasRowSpanDesktop := formatCellClass("is-row-span", p.RowSpanDesktop, "desktop") }}
+	{{ colStartWidescreenClass, hasColStartWidescreen := formatCellClass("is-col-start", p.ColStartWidescreen, "widescreen") }}
+	{{ colEndWidescreenClass, hasColEndWidescreen := formatCellClass("is-col-end", p.ColEndWidescreen, "widescreen") }}
+	{{ colFromEndWidescreenClass, hasColFromEndWidescreen := formatCellClass("is-col-from-end", p.ColFromEndWidescreen, "widescreen") }}
+	{{ colSpanWidescreenClass, hasColSpanWidescreen := formatCellClass("is-col-span", p.ColSpanWidescreen, "widescreen") }}
+	{{ rowStartWidescreenClass, hasRowStartWidescreen := formatCellClass("is-row-start", p.RowStartWidescreen, "widescreen") }}
+	{{ rowEndWidescreenClass, hasRowEndWidescreen := formatCellClass("is-row-end", p.RowEndWidescreen, "widescreen") }}
+	{{ rowFromEndWidescreenClass, hasRowFromEndWidescreen := formatCellClass("is-row-from-end", p.RowFromEndWidescreen, "widescreen") }}
+	{{ rowSpanWidescreenClass, hasRowSpanWidescreen := formatCellClass("is-row-span", p.RowSpanWidescreen, "widescreen") }}
+	{{ colStartFullHDClass, hasColStartFullHD := formatCellClass("is-col-start", p.ColStartFullHD, "fullhd") }}
+	{{ colEndFullHDClass, hasColEndFullHD := formatCellClass("is-col-end", p.ColEndFullHD, "fullhd") }}
+	{{ colFromEndFullHDClass, hasColFromEndFullHD := formatCellClass("is-col-from-end", p.ColFromEndFullHD, "fullhd") }}
+	{{ colSpanFullHDClass, hasColSpanFullHD := formatCellClass("is-col-span", p.ColSpanFullHD, "fullhd") }}
+	{{ rowStartFullHDClass, hasRowStartFullHD := formatCellClass("is-row-start", p.RowStartFullHD, "fullhd") }}
+	{{ rowEndFullHDClass, hasRowEndFullHD := formatCellClass("is-row-end", p.RowEndFullHD, "fullhd") }}
+	{{ rowFromEndFullHDClass, hasRowFromEndFullHD := formatCellClass("is-row-from-end", p.RowFromEndFullHD, "fullhd") }}
+	{{ rowSpanFullHDClass, hasRowSpanFullHD := formatCellClass("is-row-span", p.RowSpanFullHD, "fullhd") }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"cell",
+			templ.KV("is-col-start-end", p.IsColStartEnd),
+			templ.KV("is-row-start-end", p.IsRowStartEnd),
+			templ.KV(colStartClass, hasColStart),
+			templ.KV(colEndClass, hasColEnd),
+			templ.KV(colFromEndClass, hasColFromEnd),
+			templ.KV(colSpanClass, hasColSpan),
+			templ.KV(rowStartClass, hasRowStart),
+			templ.KV(rowEndClass, hasRowEnd),
+			templ.KV(rowFromEndClass, hasRowFromEnd),
+			templ.KV(rowSpanClass, hasRowSpan),
+			templ.KV(colStartMobileClass, hasColStartMobile),
+			templ.KV(colEndMobileClass, hasColEndMobile),
+			templ.KV(colFromEndMobileClass, hasColFromEndMobile),
+			templ.KV(colSpanMobileClass, hasColSpanMobile),
+			templ.KV(rowStartMobileClass, hasRowStartMobile),
+			templ.KV(rowEndMobileClass, hasRowEndMobile),
+			templ.KV(rowFromEndMobileClass, hasRowFromEndMobile),
+			templ.KV(rowSpanMobileClass, hasRowSpanMobile),
+			templ.KV(colStartTabletClass, hasColStartTablet),
+			templ.KV(colEndTabletClass, hasColEndTablet),
+			templ.KV(colFromEndTabletClass, hasColFromEndTablet),
+			templ.KV(colSpanTabletClass, hasColSpanTablet),
+			templ.KV(rowStartTabletClass, hasRowStartTablet),
+			templ.KV(rowEndTabletClass, hasRowEndTablet),
+			templ.KV(rowFromEndTabletClass, hasRowFromEndTablet),
+			templ.KV(rowSpanTabletClass, hasRowSpanTablet),
+			templ.KV(colStartDesktopClass, hasColStartDesktop),
+			templ.KV(colEndDesktopClass, hasColEndDesktop),
+			templ.KV(colFromEndDesktopClass, hasColFromEndDesktop),
+			templ.KV(colSpanDesktopClass, hasColSpanDesktop),
+			templ.KV(rowStartDesktopClass, hasRowStartDesktop),
+			templ.KV(rowEndDesktopClass, hasRowEndDesktop),
+			templ.KV(rowFromEndDesktopClass, hasRowFromEndDesktop),
+			templ.KV(rowSpanDesktopClass, hasRowSpanDesktop),
+			templ.KV(colStartWidescreenClass, hasColStartWidescreen),
+			templ.KV(colEndWidescreenClass, hasColEndWidescreen),
+			templ.KV(colFromEndWidescreenClass, hasColFromEndWidescreen),
+			templ.KV(colSpanWidescreenClass, hasColSpanWidescreen),
+			templ.KV(rowStartWidescreenClass, hasRowStartWidescreen),
+			templ.KV(rowEndWidescreenClass, hasRowEndWidescreen),
+			templ.KV(rowFromEndWidescreenClass, hasRowFromEndWidescreen),
+			templ.KV(rowSpanWidescreenClass, hasRowSpanWidescreen),
+			templ.KV(colStartFullHDClass, hasColStartFullHD),
+			templ.KV(colEndFullHDClass, hasColEndFullHD),
+			templ.KV(colFromEndFullHDClass, hasColFromEndFullHD),
+			templ.KV(colSpanFullHDClass, hasColSpanFullHD),
+			templ.KV(rowStartFullHDClass, hasRowStartFullHD),
+			templ.KV(rowEndFullHDClass, hasRowEndFullHD),
+			templ.KV(rowFromEndFullHDClass, hasRowFromEndFullHD),
+			templ.KV(rowSpanFullHDClass, hasRowSpanFullHD),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

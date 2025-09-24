@@ -1,0 +1,164 @@
+package message
+
+import "strings"
+
+// Color represents message color variants for different message types
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black message
+	IsDanger  Color = "is-danger"  // Danger/error message (red)
+	IsDark    Color = "is-dark"    // Dark message
+	IsInfo    Color = "is-info"    // Info message (blue)
+	IsLight   Color = "is-light"   // Light message
+	IsLink    Color = "is-link"    // Link-style message
+	IsPrimary Color = "is-primary" // Primary message (brand color)
+	IsSuccess Color = "is-success" // Success message (green)
+	IsText    Color = "is-text"    // Text-only message
+	IsWarning Color = "is-warning" // Warning message (yellow)
+	IsWhite   Color = "is-white"   // White message
+)
+
+// Size represents message text size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small message text size
+	IsMedium Size = "is-medium" // Medium message text size
+	IsLarge  Size = "is-large"  // Large message text size
+)
+
+// MessageProps defines configuration for message container elements.
+//
+// Use this type to configure Bulma .message elements which create
+// colored message blocks to emphasize important information on pages.
+// Messages are multi-part components supporting headers and body content.
+// Perfect for alerts, notifications, status updates, and user feedback.
+type MessageProps struct {
+	// Optional HTML id attribute for the message container
+	ID string
+
+	// List of additional CSS classes to apply to the message
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Message color variant indicating message type or importance
+	Color Color
+
+	// Text size for the entire message component
+	Size Size
+}
+
+// Message renders colored message containers.
+//
+// This component renders Bulma's .message class as an article element,
+// which creates colored message blocks with subtle borders and backgrounds.
+// Multi-part component that can contain MessageHeader and MessageBody
+// components. Features semantic colors for different message types.
+// Essential for user feedback, alerts, and status communications.
+templ Message(props ...MessageProps) {
+	{{ var p MessageProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<article
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"message",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</article>
+}
+
+// MessageHeaderProps defines configuration for message header sections.
+// Use this type to configure .message-header elements which provide
+// title bars for message components. Headers typically contain titles
+// and optional delete buttons for dismissible messages. Features
+// darker background colors that complement the message body.
+type MessageHeaderProps struct {
+	// Optional HTML id attribute for the message header
+	ID string
+
+	// List of additional CSS classes to apply to the header
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MessageHeader renders message header sections.
+//
+// This component renders Bulma's .message-header class as a div element,
+// which creates title bars with darker background colors matching the
+// message color scheme. Often contains titles and delete buttons for
+// user interaction. Essential for identifying message purpose and
+// providing dismissal functionality.
+templ MessageHeader(props ...MessageHeaderProps) {
+	{{ var p MessageHeaderProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"message-header",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// MessageBodyProps defines configuration for message body content.
+// Use this type to configure .message-body elements which contain
+// the main content of message components. Bodies feature lighter
+// background colors with appropriate padding for readable content
+// display. Can contain any type of content including text and media.
+type MessageBodyProps struct {
+	// Optional HTML id attribute for the message body
+	ID string
+
+	// List of additional CSS classes to apply to the body
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MessageBody renders message body content areas.
+//
+// This component renders Bulma's .message-body class as a div element,
+// which creates the main content area with lighter background colors
+// and appropriate padding. Contains the primary message content and
+// supports any type of content including text, lists, or media.
+// Essential for delivering the actual message information to users.
+templ MessageBody(props ...MessageBodyProps) {
+	{{ var p MessageBodyProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"message-body",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

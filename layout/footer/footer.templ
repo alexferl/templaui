@@ -1,0 +1,49 @@
+package footer
+
+import "strings"
+
+// FooterProps defines configuration for footer layout elements.
+//
+// Use this type to configure Bulma .footer elements which provide
+// simple responsive containers for website footers. The footer is
+// completely flexible and can contain any content including lists,
+// headings, columns, icons, buttons, links, and copyright information.
+// Features subtle background color and generous padding by default.
+type FooterProps struct {
+	// Optional HTML id attribute for the footer element
+	ID string
+
+	// List of additional CSS classes to apply to the footer
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Footer renders responsive website footer containers.
+//
+// This component renders Bulma's .footer class as a footer element,
+// which creates a simple responsive container with a light background
+// and generous padding (3rem 1.5rem 6rem by default). Completely
+// flexible and can contain any combination of content including
+// navigation links, company information, social media icons, columns
+// for organization, and copyright notices. Perfect for creating
+// comprehensive site footers with consistent styling.
+templ Footer(props ...FooterProps) {
+	{{ var p FooterProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<footer
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"footer",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</footer>
+}

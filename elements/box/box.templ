@@ -1,0 +1,45 @@
+package box
+
+import "strings"
+
+// BoxProps - Props for the box container
+//
+// Use this type to configure Bulma's .box element,
+// which provides a white background container with padding,
+// border radius, and subtle box shadow for visual separation.
+type BoxProps struct {
+	// Optional HTML id attribute for the box
+	ID string
+
+	// List of additional CSS classes to apply to the box
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Box - Container for Bulma box layout
+//
+// This component renders a <div> with Bulma's .box class,
+// which creates a white container with padding and shadow.
+// Perfect for containing other elements like forms, media objects,
+// or any content that needs visual separation and emphasis.
+// Additional classes, id, and HTML attributes can be provided via BoxProps.
+templ Box(props ...BoxProps) {
+	{{ var p BoxProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"box",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

@@ -1,0 +1,95 @@
+package tabs
+
+import "strings"
+
+// Size represents tab text and element size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small tab text size
+	IsMedium Size = "is-medium" // Medium tab text size
+	IsLarge  Size = "is-large"  // Large tab text size
+)
+
+// Alignment represents tab horizontal alignment options
+type Alignment string
+
+const (
+	IsCentered Alignment = "is-centered" // Center align tabs
+	IsRight    Alignment = "is-right"    // Right align tabs
+	IsCenter   Alignment = "is-center"   // Center align tabs (alias for is-centered)
+	IsLeft     Alignment = "is-left"     // Left align tabs (default)
+)
+
+// TabsProps defines configuration for tab navigation containers.
+//
+// Use this type to configure Bulma .tabs elements which create
+// horizontal navigation components with multiple visual styles.
+// Requires structured HTML with ul/li/a elements for proper
+// functionality. Perfect for content sections, settings panels,
+// and multi-step workflows with tab-based navigation.
+type TabsProps struct {
+	// Optional HTML id attribute for the tabs container
+	ID string
+
+	// List of additional CSS classes to apply to the tabs
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Horizontal alignment of tab navigation
+	Alignment Alignment
+
+	// Expand tabs to fill full width of container
+	IsFullwidth bool
+
+	// Text size for all tab elements
+	Size Size
+
+	// Apply active state styling to entire tabs container
+	IsActive bool
+
+	// Apply boxed styling with background and borders
+	IsBoxed bool
+
+	// Apply toggle button styling (mutual exclusion style)
+	IsToggle bool
+
+	// Apply toggle styling with rounded corners
+	IsToggleRounded bool
+}
+
+// Tabs renders horizontal navigation tab components.
+//
+// This component renders Bulma's .tabs class which creates horizontal
+// navigation components with various visual styles. Requires structured
+// HTML containing ul element with li and anchor elements for individual
+// tabs. Supports boxed styling, toggle button appearance, and various
+// alignments. Essential for organizing content into distinct sections
+// with tab-based navigation interface.
+templ Tabs(props ...TabsProps) {
+	{{ var p TabsProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"tabs",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Alignment), p.Alignment != ""),
+			templ.KV("is-boxed", p.IsBoxed),
+			templ.KV("is-toggle", p.IsToggle),
+			templ.KV("is-toggle-rounded", p.IsToggleRounded),
+			templ.KV("is-fullwidth", p.IsFullwidth),
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

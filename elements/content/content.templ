@@ -1,0 +1,74 @@
+package content
+
+import "strings"
+
+// Size represents content text size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small content text size
+	IsNormal Size = "is-normal" // Normal content text size (default)
+	IsMedium Size = "is-medium" // Medium content text size
+	IsLarge  Size = "is-large"  // Large content text size
+)
+
+// Style represents ordered list numbering styles
+type Style string
+
+const (
+	IsLowerAlpha Style = "is-lower-alpha" // Lowercase letters (a, b, c)
+	IsLowerRoman Style = "is-lower-roman" // Lowercase roman numerals (i, ii, iii)
+	IsUpperAlpha Style = "is-upper-alpha" // Uppercase letters (A, B, C)
+	IsUpperRoman Style = "is-upper-roman" // Uppercase roman numerals (I, II, III)
+)
+
+// ContentProps defines configuration for content containers.
+//
+// Use this type to configure Bulma .content containers which provide
+// consistent typography and spacing for text content including headings,
+// paragraphs, lists, and other HTML elements. Perfect for CMS content,
+// markdown rendering, or any rich text display.
+type ContentProps struct {
+	// Optional HTML id attribute for the content container
+	ID string
+
+	// List of additional CSS classes to apply to the content
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Text size for all content within the container
+	Size Size
+
+	// Ordered list numbering style (alpha, roman, etc.)
+	Style Style
+}
+
+// Content renders container for rich text content.
+//
+// This component renders Bulma's .content class which provides proper
+// typography, spacing, and styling for HTML content elements like
+// headings, paragraphs, lists, tables, and blockquotes. Handles
+// text sizing and list styling consistently. Perfect for blog posts,
+// documentation, CMS content, or any formatted text display.
+templ Content(props ...ContentProps) {
+	{{ var p ContentProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"content",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Style), p.Style != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

@@ -1,0 +1,187 @@
+package level
+
+import "strings"
+
+// LevelProps defines configuration for level layout containers.
+//
+// Use this type to configure Bulma .level elements which create
+// multi-purpose horizontal flexbox containers for spacing elements
+// across a horizontal axis. Perfect for toolbars, navigation bars,
+// and layouts requiring left/right alignment with vertical centering.
+// Items stack vertically on mobile unless IsMobile is enabled.
+type LevelProps struct {
+	// Optional HTML id attribute for the level container
+	ID string
+
+	// List of additional CSS classes to apply to the level
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Maintain horizontal layout on mobile devices (default stacks vertically)
+	IsMobile bool
+}
+
+// Level renders multi-purpose horizontal layout containers.
+//
+// This component renders Bulma's .level class as a nav element,
+// which creates flexbox containers that distribute space horizontally
+// and center all content vertically. By default, items stack vertically
+// on mobile for better readability, but IsMobile forces horizontal
+// layout on all screen sizes. Should contain LevelLeft, LevelRight,
+// and/or LevelItem components for proper structure and spacing.
+templ Level(props ...LevelProps) {
+	{{ var p LevelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<nav
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"level",
+			templ.KV("is-mobile", p.IsMobile),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</nav>
+}
+
+// LevelLeftProps defines configuration for level left alignment sections.
+// Use this type to configure .level-left elements which group
+// items that should appear on the left side of level containers.
+// Useful for navigation elements, titles, or primary actions
+// that need left alignment within the level layout.
+type LevelLeftProps struct {
+	// Optional HTML id attribute for the level left section
+	ID string
+
+	// List of additional CSS classes to apply to the left section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// LevelLeft renders left-aligned sections within level containers.
+//
+// This component renders Bulma's .level-left class which groups
+// items that should appear on the left side of level layouts.
+// Should contain LevelItem components for individual elements.
+// Perfect for navigation links, titles, or primary actions that
+// require left alignment within the horizontal level structure.
+templ LevelLeft(props ...LevelLeftProps) {
+	{{ var p LevelLeftProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"level-left",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// LevelRightProps defines configuration for level right alignment sections.
+// Use this type to configure .level-right elements which group
+// items that should appear on the right side of level containers.
+// Useful for secondary actions, search controls, or user interface
+// elements that need right alignment within the level layout.
+type LevelRightProps struct {
+	// Optional HTML id attribute for the level right section
+	ID string
+
+	// List of additional CSS classes to apply to the right section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// LevelRight renders right-aligned sections within level containers.
+//
+// This component renders Bulma's .level-right class which groups
+// items that should appear on the right side of level layouts.
+// Should contain LevelItem components for individual elements.
+// Perfect for secondary actions, search controls, or user interface
+// elements that require right alignment within the horizontal structure.
+templ LevelRight(props ...LevelRightProps) {
+	{{ var p LevelRightProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"level-right",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// LevelItemProps defines configuration for individual level elements.
+// Use this type to configure .level-item elements which represent
+// individual items within level containers. Can contain any content
+// including text, buttons, form inputs, or complex components.
+// All items are automatically vertically centered regardless of size.
+type LevelItemProps struct {
+	// Optional HTML id attribute for the level item
+	ID string
+
+	// List of additional CSS classes to apply to the item
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Make item flexible to grow and shrink with available space
+	IsFlexible bool
+
+	// Prevent item from growing (maintain minimum required width)
+	IsNarrow bool
+}
+
+// LevelItem renders individual elements within level containers.
+//
+// This component renders Bulma's .level-item class which creates
+// individual elements that are automatically vertically centered
+// within level layouts. Can contain any content including text,
+// buttons, form controls, or complex components. IsFlexible allows
+// items to grow/shrink with available space, while IsNarrow prevents
+// growth to maintain minimum width requirements.
+templ LevelItem(props ...LevelItemProps) {
+	{{ var p LevelItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"level-item",
+			templ.KV("is-flexible", p.IsFlexible),
+			templ.KV("is-narrow", p.IsNarrow),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

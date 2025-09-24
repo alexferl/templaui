@@ -1,0 +1,187 @@
+package checkbox
+
+import "strings"
+
+// CheckboxProps defines configuration for checkbox input wrappers.
+//
+// Use this type to configure Bulma .checkbox elements which provide
+// label wrappers around checkbox inputs. Bulma intentionally provides
+// minimal styling to preserve cross-browser compatibility. Should be
+// used within .field and .control containers for proper form layout.
+type CheckboxProps struct {
+	// Optional HTML id attribute for the checkbox label
+	ID string
+
+	// List of additional CSS classes to apply to the checkbox label
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for form submission and grouping
+	Name string
+
+	// Value attribute sent when checkbox is checked
+	Value string
+
+	// Initial checked state of the checkbox
+	Checked bool
+
+	// Disable checkbox interaction
+	Disabled bool
+
+	// Mark checkbox as required for form validation
+	Required bool
+}
+
+// Checkbox renders labeled checkbox input elements.
+//
+// This component renders Bulma's .checkbox class as a label element
+// containing an input[type="checkbox"]. Bulma provides minimal styling
+// to maintain cross-browser compatibility. The label text should be
+// provided as children content. Best used within field and control
+// containers for consistent form layout and spacing.
+templ Checkbox(props ...CheckboxProps) {
+	{{ var p CheckboxProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<label
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"checkbox",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		<input
+			type="checkbox"
+			if p.Name != "" {
+				name={ p.Name }
+			}
+			if p.Value != "" {
+				value={ p.Value }
+			}
+			if p.Checked {
+				checked
+			}
+			if p.Disabled {
+				disabled
+			}
+			if p.Required {
+				required
+			}
+		/>
+		{ children... }
+	</label>
+}
+
+// CheckboxesProps defines configuration for checkbox group containers.
+// Use this type to configure containers for multiple related checkboxes.
+// Provides consistent spacing and organization for checkbox groups
+// within forms. Should be used within field containers for proper
+// form layout integration.
+type CheckboxesProps struct {
+	// Optional HTML id attribute for the checkboxes container
+	ID string
+
+	// List of additional CSS classes to apply to the container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Checkboxes renders containers for multiple checkbox groups.
+//
+// This component renders a div container for organizing multiple
+// related checkbox elements with consistent spacing. Perfect for
+// grouping related options that allow multiple selections.
+// Should contain multiple Checkbox components.
+templ Checkboxes(props ...CheckboxesProps) {
+	{{ var p CheckboxesProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"checkboxes",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// CheckboxInputProps defines configuration for standalone checkbox inputs.
+// Use this type to configure standalone checkbox input elements without
+// automatic label wrappers. Useful for custom checkbox implementations
+// or when you need more control over the label structure and positioning.
+type CheckboxInputProps struct {
+	// Optional HTML id attribute for the checkbox input
+	ID string
+
+	// List of additional CSS classes to apply to the input
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for form submission and grouping
+	Name string
+
+	// Value attribute sent when checkbox is checked
+	Value string
+
+	// Initial checked state of the checkbox
+	Checked bool
+
+	// Disable checkbox interaction
+	Disabled bool
+
+	// Mark checkbox as required for form validation
+	Required bool
+}
+
+// CheckboxInput renders standalone checkbox input elements.
+//
+// This component renders a standalone input[type="checkbox"] element
+// without automatic label wrapping. Useful for custom implementations
+// where you need more control over label positioning or when building
+// complex checkbox layouts. Remember to associate with labels manually
+// for accessibility.
+templ CheckboxInput(props ...CheckboxInputProps) {
+	{{ var p CheckboxInputProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<input
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		type="checkbox"
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		if p.Checked {
+			checked
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Required {
+			required
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	/>
+}

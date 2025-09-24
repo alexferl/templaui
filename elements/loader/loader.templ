@@ -1,0 +1,54 @@
+package loader
+
+import "strings"
+
+// LoaderProps defines configuration for loader elements.
+//
+// Use this type to configure Bulma .loader elements which provide
+// animated loading spinners. The loader is typically used as an
+// overlay or within buttons and form controls to indicate loading
+// states. Includes proper accessibility attributes for screen readers.
+type LoaderProps struct {
+	// Optional HTML id attribute for the loader element
+	ID string
+
+	// List of additional CSS classes to apply to the loader
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Accessible label for screen readers (defaults to "Loading")
+	AriaLabel string
+}
+
+// Loader renders an animated loading spinner.
+//
+// This component renders Bulma's .loader class as a div element,
+// which creates a circular spinning animation to indicate loading
+// states. Commonly used in buttons (with .is-loading), form controls,
+// or as standalone loading indicators. Includes proper ARIA attributes
+// for accessibility and screen reader support.
+templ Loader(props ...LoaderProps) {
+	{{ var p LoaderProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"loader",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		role="status"
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		} else {
+			aria-label="Loading"
+		}
+		aria-live="polite"
+		{ p.Attributes... }
+	></div>
+}

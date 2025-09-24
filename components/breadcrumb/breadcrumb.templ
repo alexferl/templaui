@@ -1,0 +1,86 @@
+package breadcrumb
+
+import "strings"
+
+// Size represents breadcrumb text size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small breadcrumb text
+	IsMedium Size = "is-medium" // Medium breadcrumb text
+	IsLarge  Size = "is-large"  // Large breadcrumb text
+)
+
+// Style represents breadcrumb separator styles
+type Style string
+
+const (
+	HasArrowSeparator    Style = "has-arrow-separator"    // Arrow (→) separators between items
+	HasBulletSeparator   Style = "has-bullet-separator"   // Bullet (•) separators between items
+	HasDotSeparator      Style = "has-dot-separator"      // Dot (·) separators between items
+	HasSucceedsSeparator Style = "has-succeeds-separator" // Succeeds (≻) separators between items
+)
+
+// BreadcrumbProps defines configuration for breadcrumb navigation components.
+//
+// Use this type to configure Bulma .breadcrumb elements which provide
+// simple navigation components for showing the user's location within
+// a site hierarchy. Requires only a breadcrumb container and ul list
+// with automatic separator generation using CSS pseudo-elements.
+type BreadcrumbProps struct {
+	// Optional HTML id attribute for the breadcrumb navigation
+	ID string
+
+	// List of additional CSS classes to apply to the breadcrumb
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Center align the breadcrumb horizontally
+	IsCentered bool
+
+	// Right align the breadcrumb (default is left aligned)
+	IsRight bool
+
+	// Text size for all breadcrumb items
+	Size Size
+
+	// Apply active state styling to the entire breadcrumb
+	IsActive bool
+
+	// Separator style between breadcrumb items
+	Style Style
+}
+
+// Breadcrumb renders navigation breadcrumb components.
+//
+// This component renders Bulma's .breadcrumb class as a nav element,
+// which creates simple navigation components for showing hierarchical
+// page location. Automatically generates separators between items using
+// CSS pseudo-elements. Should contain a ul list with li items, where
+// the current page uses the is-active class. Perfect for site navigation
+// and showing user location within content hierarchy.
+templ Breadcrumb(props ...BreadcrumbProps) {
+	{{ var p BreadcrumbProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<nav
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"breadcrumb",
+			templ.KV("is-centered", p.IsCentered),
+			templ.KV("is-right", p.IsRight),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Style), p.Style != ""),
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</nav>
+}

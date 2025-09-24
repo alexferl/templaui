@@ -1,0 +1,64 @@
+package container
+
+import "strings"
+
+// Responsive represents container responsive behavior modifiers
+type Responsive string
+
+const (
+	IsFluid         Responsive = "is-fluid"          // Full width container (no max-width)
+	IsFullHD        Responsive = "is-fullhd"         // Full width until FullHD breakpoint (1408px)
+	IsMaxDesktop    Responsive = "is-max-desktop"    // Max width of 960px on desktop and above
+	IsMaxTablet     Responsive = "is-max-tablet"     // Max width of 769px on tablet and above
+	IsMaxWidescreen Responsive = "is-max-widescreen" // Max width of 1152px on widescreen and above
+	IsWidescreen    Responsive = "is-widescreen"     // Full width until widescreen breakpoint (1216px)
+)
+
+// ContainerProps defines configuration for container layout elements.
+//
+// Use this type to configure Bulma .container elements which provide
+// centered content wrappers with responsive max-widths. Containers are
+// essential for creating readable line lengths and maintaining proper
+// content spacing on larger screens. They remain full-width on mobile
+// and apply max-widths starting from the desktop breakpoint (1024px).
+type ContainerProps struct {
+	// Optional HTML id attribute for the container
+	ID string
+
+	// List of additional CSS classes to apply to the container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Responsive behavior modifier for container width control
+	Responsive Responsive
+}
+
+// Container renders centered content wrappers with responsive max-widths.
+//
+// This component renders Bulma's .container class which creates horizontally
+// centered content areas with automatic horizontal margins. By default,
+// containers are full-width on mobile and tablet, then apply progressive
+// max-widths: 960px (desktop), 1152px (widescreen), and 1344px (FullHD).
+// The values are divisible by both 12 and 16 for flexible grid layouts.
+// Essential for readable content presentation and consistent spacing.
+templ Container(props ...ContainerProps) {
+	{{ var p ContainerProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"container",
+			templ.KV(string(p.Responsive), p.Responsive != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

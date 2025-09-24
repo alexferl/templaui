@@ -1,0 +1,323 @@
+package card
+
+import "strings"
+
+// CardProps defines configuration for card container elements.
+//
+// Use this type to configure Bulma .card elements which provide
+// flexible and composable containers for various content types.
+// Cards are versatile components perfect for displaying structured
+// content like user profiles, product information, or article previews.
+type CardProps struct {
+	// Optional HTML id attribute for the card container
+	ID string
+
+	// List of additional CSS classes to apply to the card
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Card renders the main card container component.
+//
+// This component renders Bulma's .card class which creates a flexible
+// container with subtle shadow and border radius. Cards are composable
+// components that can contain headers, images, content, and footers
+// in any combination. Perfect for displaying structured information
+// in an organized and visually appealing way.
+templ Card(props ...CardProps) {
+	{{ var p CardProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// CardHeaderProps defines configuration for card header sections.
+// Use this type to configure .card-header elements which provide
+// a horizontal bar with shadow at the top of cards. Headers typically
+// contain titles and optional icons or controls.
+type CardHeaderProps struct {
+	// Optional HTML id attribute for the card header
+	ID string
+
+	// List of additional CSS classes to apply to the header
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardHeader renders card header sections.
+//
+// This component renders Bulma's .card-header class as a header element,
+// which creates a horizontal bar with shadow for card titles and controls.
+// Should contain CardHeaderTitle and optionally CardHeaderIcon components.
+templ CardHeader(props ...CardHeaderProps) {
+	{{ var p CardHeaderProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<header
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-header",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</header>
+}
+
+// CardHeaderTitleProps defines configuration for card header titles.
+// Use this type to configure .card-header-title elements which display
+// the main title text within card headers. Supports center alignment
+// for title positioning.
+type CardHeaderTitleProps struct {
+	// Optional HTML id attribute for the header title
+	ID string
+
+	// List of additional CSS classes to apply to the title
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Center align the title text within the header
+	IsCentered bool
+}
+
+// CardHeaderTitle renders card header title text.
+//
+// This component renders Bulma's .card-header-title class as a p element,
+// which displays left-aligned bold text by default. Use IsCentered to
+// center the title within the header. Essential for card identification.
+templ CardHeaderTitle(props ...CardHeaderTitleProps) {
+	{{ var p CardHeaderTitleProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<p
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-header-title",
+			templ.KV("is-centered", p.IsCentered),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</p>
+}
+
+// CardHeaderIconProps defines configuration for card header icons.
+// Use this type to configure .card-header-icon elements which provide
+// icon placeholders within card headers. Typically used for actions
+// like expand/collapse, settings, or other card-specific controls.
+type CardHeaderIconProps struct {
+	// Optional HTML id attribute for the header icon
+	ID string
+
+	// List of additional CSS classes to apply to the icon container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardHeaderIcon renders card header icon containers.
+//
+// This component renders Bulma's .card-header-icon class as a span element,
+// which provides a placeholder for icons within card headers. Perfect for
+// action buttons, status indicators, or decorative icons.
+templ CardHeaderIcon(props ...CardHeaderIconProps) {
+	{{ var p CardHeaderIconProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-header-icon",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+// CardContentProps defines configuration for card content sections.
+// Use this type to configure .card-content elements which provide
+// the main content area within cards. This is a multi-purpose
+// container for any type of content including text, forms, or media.
+type CardContentProps struct {
+	// Optional HTML id attribute for the card content
+	ID string
+
+	// List of additional CSS classes to apply to the content
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardContent renders card content sections.
+//
+// This component renders Bulma's .card-content class as a div element,
+// which provides the main content area with appropriate padding.
+// Can contain any type of content including text, forms, lists, or media.
+templ CardContent(props ...CardContentProps) {
+	{{ var p CardContentProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-content",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// CardImageProps defines configuration for card image containers.
+// Use this type to configure .card-image elements which provide
+// full-width containers for responsive images within cards.
+// Images automatically scale to fit the card width.
+type CardImageProps struct {
+	// Optional HTML id attribute for the image container
+	ID string
+
+	// List of additional CSS classes to apply to the image container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardImage renders card image containers.
+//
+// This component renders Bulma's .card-image class as a div element,
+// which creates a full-width container for responsive images.
+// Should contain an img element or Bulma image component for proper scaling.
+templ CardImage(props ...CardImageProps) {
+	{{ var p CardImageProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-image",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// CardFooterProps defines configuration for card footer sections.
+// Use this type to configure .card-footer elements which provide
+// horizontal lists of controls or actions at the bottom of cards.
+// Typically contains CardFooterItem components for actions.
+type CardFooterProps struct {
+	// Optional HTML id attribute for the card footer
+	ID string
+
+	// List of additional CSS classes to apply to the footer
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardFooter renders card footer sections.
+//
+// This component renders Bulma's .card-footer class as a footer element,
+// which creates a horizontal list of controls with border separators.
+// Should contain CardFooterItem components for individual actions.
+templ CardFooter(props ...CardFooterProps) {
+	{{ var p CardFooterProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<footer
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-footer",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</footer>
+}
+
+// CardFooterItemProps defines configuration for card footer items.
+// Use this type to configure .card-footer-item elements which represent
+// individual actions or links within card footers. Each item is
+// automatically separated by borders for visual distinction.
+type CardFooterItemProps struct {
+	// Optional HTML id attribute for the footer item
+	ID string
+
+	// List of additional CSS classes to apply to the item
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// CardFooterItem renders individual footer action items.
+//
+// This component renders Bulma's .card-footer-item class as an anchor element,
+// which creates individual action items within card footers. Items are
+// automatically separated by borders and can contain text, icons, or buttons.
+templ CardFooterItem(props ...CardFooterItemProps) {
+	{{ var p CardFooterItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"card-footer-item",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</a>
+}

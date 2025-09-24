@@ -1,0 +1,140 @@
+package textarea
+
+import (
+	"strconv"
+	"strings"
+)
+
+// Size represents textarea size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small textarea size
+	IsNormal Size = "is-normal" // Normal textarea size (default)
+	IsMedium Size = "is-medium" // Medium textarea size
+	IsLarge  Size = "is-large"  // Large textarea size
+)
+
+// Color represents textarea color state modifiers
+type Color string
+
+const (
+	IsPrimary Color = "is-primary" // Primary textarea color (brand)
+	IsLink    Color = "is-link"    // Link textarea color
+	IsInfo    Color = "is-info"    // Info textarea color (blue)
+	IsSuccess Color = "is-success" // Success textarea color (green)
+	IsWarning Color = "is-warning" // Warning textarea color (yellow)
+	IsDanger  Color = "is-danger"  // Danger/error textarea color (red)
+)
+
+// TextareaProps defines configuration for multiline textarea elements.
+//
+// Use this type to configure Bulma .textarea elements which style
+// native HTML textarea elements for multiline text input. Provides
+// consistent cross-browser styling with validation states, resizing
+// control, and responsive sizing. Should be wrapped in .control
+// containers and .field wrappers for proper form layout.
+type TextareaProps struct {
+	// Optional HTML id attribute for the textarea element
+	ID string
+
+	// List of additional CSS classes to apply to the textarea
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for form submission
+	Name string
+
+	// Initial text content of the textarea
+	Value string
+
+	// Placeholder text displayed when textarea is empty
+	Placeholder string
+
+	// Number of visible text rows (height control)
+	Rows int
+
+	// Number of visible character columns (width control)
+	Cols int
+
+	// Disable textarea interaction
+	Disabled bool
+
+	// Make textarea read-only (visible but not editable)
+	Readonly bool
+
+	// Mark textarea as required for form validation
+	Required bool
+
+	// Textarea size (small, normal, medium, large)
+	Size Size
+
+	// Textarea color state for validation feedback
+	Color Color
+
+	// Apply hover state styling
+	IsHovered bool
+
+	// Apply focused state styling
+	IsFocused bool
+
+	// Apply active state styling
+	IsActive bool
+
+	// Disable user resizing of the textarea
+	HasFixedSize bool
+}
+
+// Textarea renders multiline text input elements.
+//
+// This component renders Bulma's .textarea class on native HTML textarea
+// elements, providing consistent cross-browser styling for multiline text
+// input. Supports validation state colors, size modifiers, and resize
+// control. The textarea is resizable by default unless HasFixedSize is
+// enabled. Should be wrapped in .control containers for proper spacing
+// and .field containers for complete form layout integration.
+templ Textarea(props ...TextareaProps) {
+	{{ var p TextareaProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<textarea
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Placeholder != "" {
+			placeholder={ p.Placeholder }
+		}
+		if p.Rows > 0 {
+			rows={ strconv.Itoa(p.Rows) }
+		}
+		if p.Cols > 0 {
+			cols={ strconv.Itoa(p.Cols) }
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Readonly {
+			readonly
+		}
+		if p.Required {
+			required
+		}
+		class={
+			"textarea",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV("is-hovered", p.IsHovered),
+			templ.KV("is-focused", p.IsFocused),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("has-fixed-size", p.HasFixedSize),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>{ p.Value }</textarea>
+}

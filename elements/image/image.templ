@@ -1,0 +1,103 @@
+package image
+
+import "strings"
+
+// Size represents fixed image container dimensions
+type Size string
+
+const (
+	Is16x16   Size = "is-16x16"   // 16x16 pixel container (avatar)
+	Is24x24   Size = "is-24x24"   // 24x24 pixel container (avatar)
+	Is32x32   Size = "is-32x32"   // 32x32 pixel container (avatar)
+	Is48x48   Size = "is-48x48"   // 48x48 pixel container (avatar)
+	Is64x64   Size = "is-64x64"   // 64x64 pixel container (avatar)
+	Is96x96   Size = "is-96x96"   // 96x96 pixel container (avatar)
+	Is128x128 Size = "is-128x128" // 128x128 pixel container (avatar)
+)
+
+// Ratio represents aspect ratio modifiers for responsive images
+type Ratio string
+
+const (
+	IsSquare Ratio = "is-square" // Square aspect ratio (1:1)
+	Is1by1   Ratio = "is-1by1"   // 1:1 aspect ratio
+	Is1by2   Ratio = "is-1by2"   // 1:2 aspect ratio (portrait)
+	Is1by3   Ratio = "is-1by3"   // 1:3 aspect ratio (tall)
+	Is2by1   Ratio = "is-2by1"   // 2:1 aspect ratio (wide)
+	Is2by3   Ratio = "is-2by3"   // 2:3 aspect ratio (portrait)
+	Is3by1   Ratio = "is-3by1"   // 3:1 aspect ratio (banner)
+	Is3by2   Ratio = "is-3by2"   // 3:2 aspect ratio (photo)
+	Is3by4   Ratio = "is-3by4"   // 3:4 aspect ratio (portrait)
+	Is3by5   Ratio = "is-3by5"   // 3:5 aspect ratio (portrait)
+	Is4by3   Ratio = "is-4by3"   // 4:3 aspect ratio (photo)
+	Is4by5   Ratio = "is-4by5"   // 4:5 aspect ratio (portrait)
+	Is5by3   Ratio = "is-5by3"   // 5:3 aspect ratio (wide)
+	Is5by4   Ratio = "is-5by4"   // 5:4 aspect ratio (square-ish)
+	Is9by16  Ratio = "is-9by16"  // 9:16 aspect ratio (mobile)
+	Is16by9  Ratio = "is-16by9"  // 16:9 aspect ratio (widescreen)
+)
+
+// ImageProps defines configuration for image containers.
+//
+// Use this type to configure Bulma .image elements which provide
+// precisely sized containers to prevent layout shifts during image
+// loading or errors. Supports both fixed dimensions (for avatars)
+// and responsive aspect ratios. The container ensures consistent
+// spacing regardless of actual image loading state.
+type ImageProps struct {
+	// Optional HTML id attribute for the image container
+	ID string
+
+	// List of additional CSS classes to apply to the image container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Image spans full width of its container
+	IsFullwidth bool
+
+	// Enable ratio-based responsive sizing
+	HasRatio bool
+
+	// Aspect ratio for responsive images (16:9, 4:3, etc.)
+	Ratio Ratio
+
+	// Fixed dimensions for square containers (avatars, icons)
+	Size Size
+
+	// Apply rounded corners to the image
+	IsRounded bool
+}
+
+// Image renders a container for responsive images.
+//
+// This component renders Bulma's .image class as a figure element,
+// which creates a precisely sized container that prevents layout
+// shifts during image loading. Use Size for fixed square dimensions
+// (ideal for avatars) or Ratio for responsive aspect ratios (ideal
+// for photos and media). The container maintains its dimensions even
+// if the image fails to load, ensuring consistent page layout.
+templ Image(props ...ImageProps) {
+	{{ var p ImageProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<figure
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"image",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Ratio), p.Ratio != ""),
+			templ.KV("is-rounded", p.IsRounded),
+			templ.KV("is-fullwidth", p.IsFullwidth),
+			templ.KV("has-ratio", p.HasRatio),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</figure>
+}

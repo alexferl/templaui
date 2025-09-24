@@ -1,0 +1,213 @@
+package hero
+
+import "strings"
+
+// Color represents hero background color variants
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black hero background
+	IsDanger  Color = "is-danger"  // Danger/error hero (red)
+	IsDark    Color = "is-dark"    // Dark hero background
+	IsInfo    Color = "is-info"    // Info hero (blue)
+	IsLight   Color = "is-light"   // Light hero background
+	IsLink    Color = "is-link"    // Link-style hero
+	IsPrimary Color = "is-primary" // Primary hero (brand color)
+	IsSuccess Color = "is-success" // Success hero (green)
+	IsText    Color = "is-text"    // Text-only hero
+	IsWarning Color = "is-warning" // Warning hero (yellow)
+	IsWhite   Color = "is-white"   // White hero background
+)
+
+// Size represents hero height and padding modifiers
+type Size string
+
+const (
+	IsSmall                Size = "is-small"                  // Small hero with reduced padding
+	IsMedium               Size = "is-medium"                 // Medium hero with increased padding
+	IsLarge                Size = "is-large"                  // Large hero with maximum padding
+	IsHalfHeight           Size = "is-halfheight"             // Hero takes 50% of viewport height
+	IsFullHeight           Size = "is-fullheight"             // Hero takes 100% of viewport height
+	IsFullHeightWithNavbar Size = "is-fullheight-with-navbar" // Hero takes full height minus navbar
+)
+
+// HeroProps defines configuration for hero banner containers.
+//
+// Use this type to configure Bulma .hero elements which create
+// full-width imposing banners for showcasing content. Heroes are
+// perfect for landing pages, feature announcements, and prominent
+// calls-to-action. Support color variants and sizing from small
+// padding adjustments to full viewport height coverage.
+type HeroProps struct {
+	// Optional HTML id attribute for the hero section
+	ID string
+
+	// List of additional CSS classes to apply to the hero
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Background color variant for the hero banner
+	Color Color
+
+	// Hero size determining height and padding
+	Size Size
+}
+
+// Hero renders full-width banner sections for showcasing content.
+//
+// This component renders Bulma's .hero class as a section element,
+// which creates imposing full-width banners perfect for landing pages
+// and feature showcases. Must contain a HeroBody component as the main
+// content area. For full-height heroes, also requires HeroHead and
+// HeroFoot components to achieve proper layout distribution. Colors
+// provide thematic styling while sizes range from subtle padding
+// adjustments to full viewport height coverage.
+templ Hero(props ...HeroProps) {
+	{{ var p HeroProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"hero",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</section>
+}
+
+// HeroHeadProps defines configuration for hero header sections.
+// Use this type to configure .hero-head elements which provide
+// header areas that stick to the top of hero banners. Typically
+// contains navigation bars or other header content. Required for
+// full-height heroes to achieve proper layout distribution.
+type HeroHeadProps struct {
+	// Optional HTML id attribute for the hero head section
+	ID string
+
+	// List of additional CSS classes to apply to the head
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// HeroHead renders header sections for hero banners.
+//
+// This component renders Bulma's .hero-head class which creates
+// header areas that stick to the top of hero containers. Essential
+// for full-height heroes as it helps distribute content vertically.
+// Typically contains navigation bars, logos, or other header elements
+// that should remain at the top of the hero banner.
+templ HeroHead(props ...HeroHeadProps) {
+	{{ var p HeroHeadProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"hero-head",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// HeroBodyProps defines configuration for hero content sections.
+// Use this type to configure .hero-body elements which contain
+// the main content of hero banners. This is the primary content
+// area where titles, subtitles, and call-to-action elements
+// are placed. Required component for all hero layouts.
+type HeroBodyProps struct {
+	// Optional HTML id attribute for the hero body section
+	ID string
+
+	// List of additional CSS classes to apply to the body
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// HeroBody renders main content sections for hero banners.
+//
+// This component renders Bulma's .hero-body class which creates
+// the main content area of hero banners. Contains titles, subtitles,
+// descriptions, buttons, and other primary hero content. Required
+// for all hero implementations and automatically centers content
+// vertically within the hero container. Often contains container
+// elements for proper content width management.
+templ HeroBody(props ...HeroBodyProps) {
+	{{ var p HeroBodyProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"hero-body",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// HeroFootProps defines configuration for hero footer sections.
+// Use this type to configure .hero-foot elements which provide
+// footer areas that stick to the bottom of hero banners. Typically
+// contains tabs, pagination, or other footer content. Required for
+// full-height heroes to achieve proper layout distribution.
+type HeroFootProps struct {
+	// Optional HTML id attribute for the hero foot section
+	ID string
+
+	// List of additional CSS classes to apply to the foot
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// HeroFoot renders footer sections for hero banners.
+//
+// This component renders Bulma's .hero-foot class which creates
+// footer areas that stick to the bottom of hero containers. Essential
+// for full-height heroes as it helps distribute content vertically.
+// Typically contains tabs, navigation elements, or other footer
+// content that should remain at the bottom of the hero banner.
+templ HeroFoot(props ...HeroFootProps) {
+	{{ var p HeroFootProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"hero-foot",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

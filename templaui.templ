@@ -1,0 +1,396 @@
+package templaui
+
+// DocumentProps defines the properties for a complete HTML document with Bulma CSS integration.
+// This is the primary structure for creating full HTML documents with sensible defaults.
+type DocumentProps struct {
+	// Document title (defaults to "My App")
+	Title string
+	// Meta description for SEO
+	Description string
+	// HTML language attribute (defaults to "en")
+	Lang string
+	// Path to favicon (defaults to data: URI if empty)
+	Favicon string
+	// If true, loads Bulma CSS from local file instead of CDN
+	UseLocalCSS bool
+	// Custom path for local Bulma CSS file
+	LocalCSSPath string
+	// Character encoding (defaults to "UTF-8")
+	Charset string
+	// Viewport meta tag content (defaults to responsive viewport)
+	Viewport string
+	// Theme color for mobile browsers (defaults to Bulma's primary color #00d1b2)
+	Theme string
+	// Color scheme support (defaults to "light dark")
+	ColorScheme string
+	// CSS classes to apply to body element
+	BodyClass string
+	// Additional attributes for body element
+	BodyAttrs templ.Attributes
+}
+
+// Document generates a complete HTML document with Bulma CSS integration.
+// Automatically sets reasonable defaults for common properties and includes
+// the MetaHead component for essential meta tags. Supports additional head content
+// via variadic templ.Component parameters.
+templ Document(props DocumentProps, headContents ...templ.Component) {
+	{{ var p = props }}
+	// Set sensible defaults for empty properties
+	{{if p.Lang == "" {
+	p.Lang = "en"
+}
+	}}
+	{{if p.Title == "" {
+	p.Title = "My App"
+}
+	}}
+	{{if p.Charset == "" {
+	p.Charset = "UTF-8"
+}
+	}}
+	{{if p.Viewport == "" {
+	p.Viewport = "width=device-width, initial-scale=1.0"
+}
+	}}
+	<!DOCTYPE html>
+	<html lang={ p.Lang }>
+		<head>
+			<title>{ p.Title }</title>
+			@MetaHead(MetaHeadProps{
+				Description: p.Description,
+				Favicon:     p.Favicon,
+				Charset:     p.Charset,
+				Viewport:    p.Viewport,
+				Theme:       p.Theme,
+				ColorScheme: p.ColorScheme,
+			})
+			@BulmaCSS(BulmaConfig{
+				UseLocal:  p.UseLocalCSS,
+				LocalPath: p.LocalCSSPath,
+				Preload:   true,
+			})
+			// Include any additional head content passed as parameters
+			for _, content := range headContents {
+				@content
+			}
+		</head>
+		<body
+			if p.BodyClass != "" {
+				class={ p.BodyClass }
+			}
+			{ p.BodyAttrs... }
+		>
+			{ children... }
+		</body>
+	</html>
+}
+
+// HeadProps defines the properties for a standalone head element.
+// Useful when you need more control over the document structure.
+type HeadProps struct {
+	// Document title
+	Title string
+}
+
+// Head generates a standalone HTML head element with title and additional content.
+// Provides more granular control compared to the full Document template.
+templ Head(props HeadProps, headContents ...templ.Component) {
+	{{ var p = props }}
+	<head>
+		<title>{ p.Title }</title>
+		// Include any additional head content
+		for _, content := range headContents {
+			@content
+		}
+	</head>
+}
+
+// MetaHeadProps defines properties for essential HTML meta tags.
+// Includes common SEO and browser optimization tags for document head sections.
+type MetaHeadProps struct {
+	// Meta description for search engines
+	Description string
+	// Path to favicon file
+	Favicon string
+	// Character encoding (usually UTF-8)
+	Charset string
+	// Viewport configuration for responsive design
+	Viewport string
+	// Theme color for mobile browsers
+	Theme string
+	// Color scheme support (defaults to "light dark")
+	ColorScheme string
+	// Meta keywords (deprecated but sometimes used)
+	Keywords string
+	// Document author
+	Author string
+}
+
+// MetaHead generates essential HTML meta tags for SEO and browser optimization.
+// Includes charset, viewport, description, theme-color, color-scheme, and favicon.
+// Only outputs tags when corresponding properties are provided (except charset/viewport).
+// Automatically defaults to Bulma's primary color (#00d1b2) for theme-color and
+// "light dark" for color-scheme if not specified.
+templ MetaHead(props MetaHeadProps) {
+	// Essential meta tags - always included
+	@Meta(MetaProps{Charset: props.Charset})
+	@Meta(MetaProps{Name: "viewport", Content: props.Viewport})
+	// Color scheme support - defaults to light and dark mode support
+	if props.ColorScheme != "" {
+		@Meta(MetaProps{Name: "color-scheme", Content: props.ColorScheme})
+	} else {
+		@Meta(MetaProps{Name: "color-scheme", Content: "light dark"})
+	}
+	// Optional SEO and metadata tags
+	if props.Description != "" {
+		@Meta(MetaProps{Name: "description", Content: props.Description})
+	}
+	if props.Keywords != "" {
+		@Meta(MetaProps{Name: "keywords", Content: props.Keywords})
+	}
+	if props.Author != "" {
+		@Meta(MetaProps{Name: "author", Content: props.Author})
+	}
+	// Theme color - defaults to Bulma's primary color if not specified
+	if props.Theme != "" {
+		@Meta(MetaProps{Name: "theme-color", Content: props.Theme})
+	} else {
+		@Meta(MetaProps{Name: "theme-color", Content: "#00d1b2"})
+	}
+	// Favicon handling - provides empty data URI if no favicon specified
+	if props.Favicon != "" {
+		@Link(LinkProps{Rel: "icon", Href: props.Favicon})
+	} else {
+		@Link(LinkProps{Rel: "icon", Href: "data:,"})
+	}
+}
+
+// BodyProps defines properties for a standalone body element.
+// Useful for custom document structures or server-sent content.
+type BodyProps struct {
+	// HTML id attribute
+	ID string
+	// CSS class names
+	Class string
+	// Additional HTML attributes
+	Attributes templ.Attributes
+}
+
+// Body generates a standalone HTML body element with configurable attributes.
+// Accepts optional BodyProps parameter for customization.
+templ Body(props ...BodyProps) {
+	{{ var p BodyProps }}
+	// Use provided props or default empty struct
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<body
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Class != "" {
+			class={ p.Class }
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</body>
+}
+
+// PreloadCSS generates DNS prefetch and preconnect hints for CDN resources.
+// Improves loading performance by establishing early connections to external resources.
+// Should be used when loading Bulma from CDN.
+templ PreloadCSS() {
+	@Link(LinkProps{Rel: "preconnect", Href: "https://cdnjs.cloudflare.com", CrossOrigin: "anonymous"})
+	@Link(LinkProps{Rel: "dns-prefetch", Href: "https://cdnjs.cloudflare.com"})
+}
+
+// BulmaConfig defines configuration options for Bulma CSS loading.
+// Supports both local and CDN loading with version management and security.
+type BulmaConfig struct {
+	// If true, loads from local file instead of CDN
+	UseLocal bool
+	// Custom path for local Bulma CSS file
+	LocalPath string
+	// Bulma version for CDN loading (defaults to "1.0.4")
+	Version string
+	// Enable DNS prefetch and preconnect for CDN
+	Preload bool
+	// Subresource Integrity (SRI) hash for security
+	Integrity string
+}
+
+// BulmaCSS generates the appropriate link tag for Bulma CSS framework.
+// Supports both local file serving and CDN loading with integrity checks.
+// Automatically sets current stable version (1.0.4) and SRI hash if not provided.
+//
+// For local loading:
+//   @BulmaCSS(BulmaConfig{UseLocal: true, LocalPath: "/css/bulma.min.css"})
+//
+// For CDN loading with preload optimization:
+//   @BulmaCSS(BulmaConfig{Preload: true})
+templ BulmaCSS(config BulmaConfig) {
+	// Set default version if not specified (current stable: 1.0.4)
+	{{if config.Version == "" {
+	config.Version = "1.0.4"
+}
+	}}
+	// Set default SRI integrity hash for version 1.0.4
+	{{if config.Integrity == "" {
+	config.Integrity = "sha512-yh2RE0wZCVZeysGiqTwDTO/dKelCbS9bP2L94UvOFtl/FKXcNAje3Y2oBg/ZMZ3LS1sicYk4dYVGtDex75fvvA=="
+}
+	}}
+	if config.UseLocal {
+		// Local file loading - check for custom path or use default
+		if config.LocalPath != "" {
+			@Link(LinkProps{Rel: "stylesheet", Href: config.LocalPath})
+		} else {
+			@Link(LinkProps{Rel: "stylesheet", Href: "/static/css/bulma.min.css"})
+		}
+	} else {
+		// CDN loading with optional performance optimizations
+		if config.Preload {
+			@PreloadCSS()
+		}
+		@Link(LinkProps{
+			Rel:            "stylesheet",
+			Href:           "https://cdnjs.cloudflare.com/ajax/libs/bulma/" + config.Version + "/css/bulma.min.css",
+			Integrity:      config.Integrity,
+			CrossOrigin:    "anonymous",
+			ReferrerPolicy: "no-referrer",
+		})
+	}
+}
+
+// MetaProps defines properties for generic HTML meta tag generation.
+// Supports all standard meta tag variations including name, property, http-equiv, and charset.
+// Use this for flexible meta tag creation when MetaHead doesn't cover specific needs.
+type MetaProps struct {
+	// Meta tag name attribute (e.g., "description", "keywords")
+	Name string
+	// Meta tag content attribute
+	Content string
+	// Meta tag property attribute (for Open Graph and similar meta tags)
+	Property string
+	// Meta tag http-equiv attribute (for HTTP header simulation)
+	HttpEquiv string
+	// Meta tag charset attribute (for character encoding specification)
+	Charset string
+}
+
+// Meta generates flexible HTML meta tags based on provided properties.
+// Automatically determines the appropriate meta tag format based on which
+// properties are provided. Supports charset, http-equiv, property (Open Graph),
+// and standard name-based meta tags.
+templ Meta(props MetaProps) {
+	if props.Charset != "" {
+		<meta charset={ props.Charset }/>
+	} else if props.HttpEquiv != "" {
+		<meta http-equiv={ props.HttpEquiv } content={ props.Content }/>
+	} else if props.Property != "" {
+		<meta property={ props.Property } content={ props.Content }/>
+	} else if props.Name != "" {
+		<meta name={ props.Name } content={ props.Content }/>
+	}
+}
+
+// LinkProps defines properties for HTML link tag generation.
+// Supports all standard link attributes including rel, href, type, sizes,
+// and security attributes like integrity and crossorigin.
+type LinkProps struct {
+	// Link relationship attribute (e.g., "stylesheet", "icon", "manifest")
+	Rel string
+	// Link URL or path
+	Href string
+	// MIME type of the linked resource
+	Type string
+	// Icon sizes (for icon links)
+	Sizes string
+	// Subresource Integrity hash for security
+	Integrity string
+	// Cross-origin attribute for CORS handling
+	CrossOrigin string
+	// Referrer policy for the linked resource
+	ReferrerPolicy string
+	// Resource hint for preloading (e.g., "style", "script")
+	As string
+	// Media query for conditional loading
+	Media string
+	// Additional HTML attributes
+	Attributes templ.Attributes
+}
+
+// Link generates flexible HTML link tags for stylesheets, icons, manifests, and preloading.
+// Supports all standard link attributes and automatically handles optional attributes.
+// Essential for loading CSS, favicons, web app manifests, and resource preloading.
+templ Link(props LinkProps) {
+	<link
+		rel={ props.Rel }
+		href={ templ.SafeURL(props.Href) }
+		if props.Type != "" {
+			type={ props.Type }
+		}
+		if props.Sizes != "" {
+			sizes={ props.Sizes }
+		}
+		if props.Integrity != "" {
+			integrity={ props.Integrity }
+		}
+		if props.CrossOrigin != "" {
+			crossorigin={ props.CrossOrigin }
+		}
+		if props.ReferrerPolicy != "" {
+			referrerpolicy={ props.ReferrerPolicy }
+		}
+		if props.As != "" {
+			as={ props.As }
+		}
+		if props.Media != "" {
+			media={ props.Media }
+		}
+		{ props.Attributes... }
+	/>
+}
+
+// HTMLProps defines properties for a complete HTML document structure.
+// More flexible than DocumentProps but requires manual head content management.
+// Useful when you need complete control over document structure.
+type HTMLProps struct {
+	// Document title
+	Title string
+	// HTML language attribute
+	Lang string
+	// Additional attributes for html element
+	Attributes templ.Attributes
+}
+
+// HTML generates a complete HTML document structure with more manual control.
+// Unlike Document, this template requires you to manage head content manually.
+// Useful when you need custom document structure or head content management.
+//
+// Example:
+//   @HTML(HTMLProps{Title: "Custom App", Lang: "en-US"}) {
+//       // Your content here
+//   }
+templ HTML(props HTMLProps, headContents ...templ.Component) {
+	{{ var p = props }}
+	// Set defaults for common properties
+	{{if p.Lang == "" {
+	p.Lang = "en"
+}
+	}}
+	{{if p.Title == "" {
+	p.Title = "My App"
+}
+	}}
+	<!DOCTYPE html>
+	<html
+		lang={ p.Lang }
+		{ p.Attributes... }
+	>
+		@Head(HeadProps{Title: p.Title}, headContents...)
+		@Body() {
+			{ children... }
+		}
+	</html>
+}

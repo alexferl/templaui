@@ -1,0 +1,151 @@
+package menu
+
+import "strings"
+
+// Size represents menu text size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small menu text size
+	IsMedium Size = "is-medium" // Medium menu text size
+	IsLarge  Size = "is-large"  // Large menu text size
+)
+
+// MenuProps defines configuration for menu container elements.
+//
+// Use this type to configure Bulma .menu elements which create
+// vertical navigation components. Menus are structured containers
+// for organizing navigation links with labels and nested lists.
+// Perfect for sidebars, navigation panels, and hierarchical menus.
+type MenuProps struct {
+	// Optional HTML id attribute for the menu container
+	ID string
+
+	// List of additional CSS classes to apply to the menu
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Text size for all menu elements
+	Size Size
+
+	// Apply active state styling to the entire menu
+	IsActive bool
+
+	// Apply selected state styling to the entire menu
+	IsSelected bool
+}
+
+// Menu renders vertical navigation menu containers.
+//
+// This component renders Bulma's .menu class as an aside element,
+// which creates structured vertical navigation components. Comprises
+// menu labels for section headers and menu lists for navigation items.
+// Supports nesting up to 2 levels for hierarchical organization.
+// Essential for sidebars and vertical navigation systems.
+templ Menu(props ...MenuProps) {
+	{{ var p MenuProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<aside
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"menu",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV("is-active", p.IsActive),
+			templ.KV("is-selected", p.IsSelected),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</aside>
+}
+
+// MenuLabelProps defines configuration for menu section labels.
+// Use this type to configure .menu-label elements which provide
+// informative section headers within menu components. Labels help
+// organize menu items into logical groups and improve navigation
+// hierarchy and user understanding.
+type MenuLabelProps struct {
+	// Optional HTML id attribute for the menu label
+	ID string
+
+	// List of additional CSS classes to apply to the label
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MenuLabel renders menu section headers.
+//
+// This component renders Bulma's .menu-label class as a p element,
+// which creates informative section headers within menu components.
+// Labels are typically styled with smaller, muted text to distinguish
+// them from interactive menu items. Perfect for categorizing and
+// organizing navigation sections.
+templ MenuLabel(props ...MenuLabelProps) {
+	{{ var p MenuLabelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<p
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"menu-label",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</p>
+}
+
+// MenuListProps defines configuration for menu item lists.
+// Use this type to configure .menu-list elements which contain
+// interactive navigation items within menu components. Lists can
+// be nested up to 2 levels deep for hierarchical organization
+// and support active states for current page indication.
+type MenuListProps struct {
+	// Optional HTML id attribute for the menu list
+	ID string
+
+	// List of additional CSS classes to apply to the menu list
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// MenuList renders interactive menu item lists.
+//
+// This component renders Bulma's .menu-list class as a ul element,
+// which contains interactive navigation items with hover and active
+// states. Supports nesting up to 2 levels for sub-navigation and
+// hierarchical organization. Should contain li elements with anchor
+// tags for proper navigation semantics.
+templ MenuList(props ...MenuListProps) {
+	{{ var p MenuListProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<ul
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"menu-list",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</ul>
+}

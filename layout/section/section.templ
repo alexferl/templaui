@@ -1,0 +1,62 @@
+package section
+
+import "strings"
+
+// Size represents section spacing size modifiers
+type Size string
+
+const (
+	IsMedium     Size = "is-medium"     // Medium section spacing (9rem top/bottom padding)
+	IsLarge      Size = "is-large"      // Large section spacing (18rem top/bottom padding)
+	IsFullHeight Size = "is-fullheight" // Section takes full viewport height
+)
+
+// SectionProps defines configuration for section layout containers.
+//
+// Use this type to configure Bulma .section elements which provide
+// simple layout containers with responsive padding for dividing pages
+// into distinct horizontal sections. Best used as direct children of
+// the body element to create top-to-bottom page structure. Default
+// padding is 3rem top/bottom with 1.5rem left/right.
+type SectionProps struct {
+	// Optional HTML id attribute for the section element
+	ID string
+
+	// List of additional CSS classes to apply to the section
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Section spacing size (default, medium, large, or full-height)
+	Size Size
+}
+
+// Section renders layout containers for page structure division.
+//
+// This component renders Bulma's .section class as a section element,
+// which creates simple layout containers with responsive padding for
+// organizing page content into horizontal sections. Best used as direct
+// children of the body element to establish top-to-bottom page structure.
+// Default provides 3rem vertical padding, with medium (9rem) and large
+// (18rem) options for increased spacing. Perfect for creating distinct
+// content areas and maintaining consistent vertical rhythm.
+templ Section(props ...SectionProps) {
+	{{ var p SectionProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"section",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</section>
+}

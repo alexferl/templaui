@@ -1,0 +1,102 @@
+package form
+
+import "strings"
+
+// LabelProps defines configuration for form label elements.
+//
+// Use this type to configure Bulma .label elements which provide
+// accessible labeling for form controls. Essential for screen readers
+// and user experience as they describe the purpose of associated inputs.
+// The For attribute creates programmatic relationships between labels
+// and controls, enabling click-to-focus functionality.
+type LabelProps struct {
+	// Optional HTML id attribute for the label element
+	ID string
+
+	// List of additional CSS classes to apply to the label
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// ID of the form control this label describes (creates association)
+	For string
+}
+
+// Label renders accessible form control labels.
+//
+// This component renders Bulma's .label class on HTML label elements
+// which provide accessible descriptions for form controls. Essential for
+// accessibility as screen readers use labels to announce the purpose of
+// inputs. The For attribute creates programmatic association between the
+// label and control, enabling click-to-focus behavior. Should be placed
+// within field containers for proper spacing and layout.
+templ Label(props ...LabelProps) {
+	{{ var p LabelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<label
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.For != "" {
+			for={ p.For }
+		}
+		class={
+			"label",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</label>
+}
+
+// HelpProps defines configuration for form help text elements.
+// Use this type to configure Bulma .help elements which provide
+// additional guidance, instructions, or validation feedback for
+// form controls. Supports color modifiers for different message
+// types including success, warning, and error states. Should be
+// placed within field containers after form controls.
+type HelpProps struct {
+	// Optional HTML id attribute for the help text element
+	ID string
+
+	// List of additional CSS classes to apply to the help text
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Color modifier for validation feedback and message type indication
+	Color Color
+}
+
+// Help renders instructional and validation text for form fields.
+//
+// This component renders Bulma's .help class which provides supplementary
+// text for form controls including instructions, format requirements, and
+// validation feedback. Color modifiers indicate message type (success,
+// warning, error). Automatically receives subtle styling and appropriate
+// spacing when placed within field containers. Essential for providing
+// clear guidance and feedback to users during form interaction.
+templ Help(props ...HelpProps) {
+	{{ var p HelpProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<p
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"help",
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</p>
+}

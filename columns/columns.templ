@@ -1,0 +1,292 @@
+package columns
+
+import "strings"
+
+// Size represents column size types for Bulma's flexbox system
+type Size string
+
+const (
+	// 12-column system numeric sizes (fraction of container width)
+	Size0  Size = "0"  // Hidden column (0%)
+	Size1  Size = "1"  // 1/12 of container width (~8.33%)
+	Size2  Size = "2"  // 2/12 of container width (~16.67%)
+	Size3  Size = "3"  // 3/12 of container width (25%)
+	Size4  Size = "4"  // 4/12 of container width (~33.33%)
+	Size5  Size = "5"  // 5/12 of container width (~41.67%)
+	Size6  Size = "6"  // 6/12 of container width (50%)
+	Size7  Size = "7"  // 7/12 of container width (~58.33%)
+	Size8  Size = "8"  // 8/12 of container width (~66.67%)
+	Size9  Size = "9"  // 9/12 of container width (75%)
+	Size10 Size = "10" // 10/12 of container width (~83.33%)
+	Size11 Size = "11" // 11/12 of container width (~91.67%)
+	Size12 Size = "12" // 12/12 of container width (100%)
+
+	// Named fraction sizes for common proportions
+	SizeThreeQuarters Size = "three-quarters" // 75% width
+	SizeTwoThirds     Size = "two-thirds"     // ~66.67% width
+	SizeHalf          Size = "half"           // 50% width
+	SizeOneThird      Size = "one-third"      // ~33.33% width
+	SizeOneQuarter    Size = "one-quarter"    // 25% width
+	SizeOneFifth      Size = "one-fifth"      // 20% width
+	SizeTwoFifths     Size = "two-fifths"     // 40% width
+	SizeThreeFifths   Size = "three-fifths"   // 60% width
+	SizeFourFifths    Size = "four-fifths"    // 80% width
+	SizeFull          Size = "full"           // 100% width
+	SizeNarrow        Size = "narrow"         // Width determined by content
+)
+
+// Gap represents column gap sizes using pointer to distinguish nil (unset) from zero
+type Gap *int
+
+var (
+	Gap0 Gap = &[]int{0}[0] // No gap between columns
+	Gap1 Gap = &[]int{1}[0] // 0.25rem gap
+	Gap2 Gap = &[]int{2}[0] // 0.5rem gap
+	Gap3 Gap = &[]int{3}[0] // 0.75rem gap (default)
+	Gap4 Gap = &[]int{4}[0] // 1rem gap
+	Gap5 Gap = &[]int{5}[0] // 1.25rem gap
+	Gap6 Gap = &[]int{6}[0] // 1.5rem gap
+	Gap7 Gap = &[]int{7}[0] // 1.75rem gap
+	Gap8 Gap = &[]int{8}[0] // 2rem gap
+)
+
+// ColumnsProps defines configuration for flexbox columns containers.
+//
+// Use this type to configure Bulma .columns elements which create
+// responsive flexbox-based column layouts. Provides comprehensive
+// control over column alignment, gaps, responsiveness, and layout
+// behavior across all Bulma breakpoints. Perfect for responsive
+// grid systems and flexible content layouts.
+type ColumnsProps struct {
+	// Optional HTML id attribute for the columns container
+	ID string
+
+	// List of additional CSS classes to apply to the columns container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Center columns horizontally within the container
+	IsCentered bool
+
+	// Center columns vertically within the container
+	IsVCentered bool
+
+	// Gap between columns (applies to all breakpoints unless overridden)
+	Gap Gap
+
+	// Enable column layout on mobile devices (disabled by default)
+	IsMobile bool
+
+	// Allow columns to wrap to multiple lines
+	IsMultiline bool
+
+	// Only show columns layout on desktop and up
+	IsDesktop bool
+
+	// Remove all gaps between columns
+	IsGapless bool
+
+	// Gap for mobile devices (max-width: 768px)
+	GapMobile Gap
+
+	// Gap for tablet devices (min-width: 769px)
+	GapTablet Gap
+
+	// Gap for tablet only (769px - 1023px)
+	GapTabletOnly Gap
+
+	// Gap for touch devices (max-width: 1023px)
+	GapTouch Gap
+
+	// Gap for desktop devices (min-width: 1024px)
+	GapDesktop Gap
+
+	// Gap for desktop only (1024px - 1215px)
+	GapDesktopOnly Gap
+
+	// Gap for widescreen devices (min-width: 1216px)
+	GapWidescreen Gap
+
+	// Gap for widescreen only (1216px - 1407px)
+	GapWidescreenOnly Gap
+
+	// Gap for FullHD devices (min-width: 1408px)
+	GapFullHD Gap
+}
+
+func formatGapClass(gap Gap, suffix string) (string, bool) {
+	if gap == nil {
+		return "", false
+	}
+	value := *gap
+	if value < 0 || value > 8 {
+		return "", false
+	}
+	if suffix == "" {
+		return "is-" + string(rune('0'+value)), true
+	}
+	return "is-" + string(rune('0'+value)) + "-" + suffix, true
+}
+
+// Columns renders container for flexbox-based column layouts.
+//
+// This component renders Bulma's .columns class which creates responsive
+// flexbox layouts powered by CSS Flexbox. Columns automatically distribute
+// available width equally unless specific sizes are set. Supports advanced
+// features like vertical centering, gap control, multiline wrapping, and
+// responsive behavior. Essential for creating flexible grid layouts.
+templ Columns(props ...ColumnsProps) {
+	{{ var p ColumnsProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{ gapClass, hasGap := formatGapClass(p.Gap, "") }}
+	{{ gapMobileClass, hasGapMobile := formatGapClass(p.GapMobile, "mobile") }}
+	{{ gapTabletClass, hasGapTablet := formatGapClass(p.GapTablet, "tablet") }}
+	{{ gapTabletOnlyClass, hasGapTabletOnly := formatGapClass(p.GapTabletOnly, "tablet-only") }}
+	{{ gapTouchClass, hasGapTouch := formatGapClass(p.GapTouch, "touch") }}
+	{{ gapDesktopClass, hasGapDesktop := formatGapClass(p.GapDesktop, "desktop") }}
+	{{ gapDesktopOnlyClass, hasGapDesktopOnly := formatGapClass(p.GapDesktopOnly, "desktop-only") }}
+	{{ gapWidescreenClass, hasGapWidescreen := formatGapClass(p.GapWidescreen, "widescreen") }}
+	{{ gapWidescreenOnlyClass, hasGapWidescreenOnly := formatGapClass(p.GapWidescreenOnly, "widescreen-only") }}
+	{{ gapFullHDClass, hasGapFullHD := formatGapClass(p.GapFullHD, "fullhd") }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"columns",
+			templ.KV("is-mobile", p.IsMobile),
+			templ.KV("is-multiline", p.IsMultiline),
+			templ.KV("is-desktop", p.IsDesktop),
+			templ.KV("is-gapless", p.IsGapless),
+			templ.KV("is-centered", p.IsCentered),
+			templ.KV("is-vcentered", p.IsVCentered),
+			templ.KV(gapClass, hasGap),
+			templ.KV(gapMobileClass, hasGapMobile),
+			templ.KV(gapTabletClass, hasGapTablet),
+			templ.KV(gapTabletOnlyClass, hasGapTabletOnly),
+			templ.KV(gapTouchClass, hasGapTouch),
+			templ.KV(gapDesktopClass, hasGapDesktop),
+			templ.KV(gapDesktopOnlyClass, hasGapDesktopOnly),
+			templ.KV(gapWidescreenClass, hasGapWidescreen),
+			templ.KV(gapWidescreenOnlyClass, hasGapWidescreenOnly),
+			templ.KV(gapFullHDClass, hasGapFullHD),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// ColumnProps defines configuration for individual columns within containers.
+// Use this type to configure individual .column elements within Bulma
+// columns containers. Supports precise sizing using both 12-column
+// numeric system and named fractions, with full responsive control
+// and offset positioning across all breakpoints. Essential for
+// creating flexible and responsive column layouts.
+type ColumnProps struct {
+	// Optional HTML id attribute for the column
+	ID string
+
+	// List of additional CSS classes to apply to the column
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Default sizes (applies to tablet and up)
+	Size   Size // is-{size}
+	Offset Size // is-offset-{size}
+
+	// Mobile responsive (max-width: 768px)
+	SizeMobile   Size // is-{size}-mobile
+	OffsetMobile Size // is-offset-{size}-mobile
+
+	// Tablet responsive (min-width: 769px)
+	SizeTablet   Size // is-{size}-tablet
+	OffsetTablet Size // is-offset-{size}-tablet
+
+	// Touch responsive (max-width: 1023px)
+	SizeTouch   Size // is-{size}-touch
+	OffsetTouch Size // is-offset-{size}-touch
+
+	// Desktop responsive (min-width: 1024px)
+	SizeDesktop   Size // is-{size}-desktop
+	OffsetDesktop Size // is-offset-{size}-desktop
+
+	// Widescreen responsive (min-width: 1216px)
+	SizeWidescreen   Size // is-{size}-widescreen
+	OffsetWidescreen Size // is-offset-{size}-widescreen
+
+	// FullHD responsive (min-width: 1408px)
+	SizeFullHD   Size // is-{size}-fullhd
+	OffsetFullHD Size // is-offset-{size}-fullhd
+}
+
+func formatSizeClass(prefix string, size Size, suffix string) (string, bool) {
+	if size == "" {
+		return "", false
+	}
+	if suffix == "" {
+		return prefix + "-" + string(size), true
+	}
+	return prefix + "-" + string(size) + "-" + suffix, true
+}
+
+// Column renders individual columns within columns containers.
+//
+// This component renders individual .column elements with comprehensive
+// sizing and positioning options. Supports both 12-column numeric system
+// (1-12) and named fractions (half, one-third, etc.) with full responsive
+// control. Columns without specified sizes automatically distribute
+// available width equally. Perfect for creating flexible layouts.
+templ Column(props ...ColumnProps) {
+	{{ var p ColumnProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{ sizeClass, hasSize := formatSizeClass("is", p.Size, "") }}
+	{{ offsetClass, hasOffset := formatSizeClass("is-offset", p.Offset, "") }}
+	{{ sizeMobileClass, hasSizeMobile := formatSizeClass("is", p.SizeMobile, "mobile") }}
+	{{ offsetMobileClass, hasOffsetMobile := formatSizeClass("is-offset", p.OffsetMobile, "mobile") }}
+	{{ sizeTabletClass, hasSizeTablet := formatSizeClass("is", p.SizeTablet, "tablet") }}
+	{{ offsetTabletClass, hasOffsetTablet := formatSizeClass("is-offset", p.OffsetTablet, "tablet") }}
+	{{ sizeTouchClass, hasSizeTouch := formatSizeClass("is", p.SizeTouch, "touch") }}
+	{{ offsetTouchClass, hasOffsetTouch := formatSizeClass("is-offset", p.OffsetTouch, "touch") }}
+	{{ sizeDesktopClass, hasSizeDesktop := formatSizeClass("is", p.SizeDesktop, "desktop") }}
+	{{ offsetDesktopClass, hasOffsetDesktop := formatSizeClass("is-offset", p.OffsetDesktop, "desktop") }}
+	{{ sizeWidescreenClass, hasSizeWidescreen := formatSizeClass("is", p.SizeWidescreen, "widescreen") }}
+	{{ offsetWidescreenClass, hasOffsetWidescreen := formatSizeClass("is-offset", p.OffsetWidescreen, "widescreen") }}
+	{{ sizeFullHDClass, hasSizeFullHD := formatSizeClass("is", p.SizeFullHD, "fullhd") }}
+	{{ offsetFullHDClass, hasOffsetFullHD := formatSizeClass("is-offset", p.OffsetFullHD, "fullhd") }}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"column",
+			templ.KV(sizeClass, hasSize),
+			templ.KV(offsetClass, hasOffset),
+			templ.KV(sizeMobileClass, hasSizeMobile),
+			templ.KV(offsetMobileClass, hasOffsetMobile),
+			templ.KV(sizeTabletClass, hasSizeTablet),
+			templ.KV(offsetTabletClass, hasOffsetTablet),
+			templ.KV(sizeTouchClass, hasSizeTouch),
+			templ.KV(offsetTouchClass, hasOffsetTouch),
+			templ.KV(sizeDesktopClass, hasSizeDesktop),
+			templ.KV(offsetDesktopClass, hasOffsetDesktop),
+			templ.KV(sizeWidescreenClass, hasSizeWidescreen),
+			templ.KV(offsetWidescreenClass, hasOffsetWidescreen),
+			templ.KV(sizeFullHDClass, hasSizeFullHD),
+			templ.KV(offsetFullHDClass, hasOffsetFullHD),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

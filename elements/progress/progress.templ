@@ -1,0 +1,111 @@
+package progress
+
+import (
+	"strconv"
+	"strings"
+)
+
+// Size represents progress bar size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small progress bar
+	IsMedium Size = "is-medium" // Medium progress bar
+	IsLarge  Size = "is-large"  // Large progress bar
+)
+
+// Color represents progress bar color variants
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black progress bar
+	IsDanger  Color = "is-danger"  // Danger/error progress bar (red)
+	IsDark    Color = "is-dark"    // Dark progress bar
+	IsInfo    Color = "is-info"    // Info progress bar (blue)
+	IsLight   Color = "is-light"   // Light progress bar
+	IsLink    Color = "is-link"    // Link-style progress bar
+	IsPrimary Color = "is-primary" // Primary progress bar (brand color)
+	IsSuccess Color = "is-success" // Success progress bar (green)
+	IsText    Color = "is-text"    // Text-only progress bar
+	IsWarning Color = "is-warning" // Warning progress bar (yellow)
+	IsWhite   Color = "is-white"   // White progress bar
+)
+
+// ProgressProps defines configuration for progress bar elements.
+//
+// Use this type to configure Bulma .progress elements which style
+// native HTML <progress> elements. Supports determinate progress
+// (with Value) and indeterminate progress (without Value) for
+// loading states, file uploads, form completion, and task progress.
+type ProgressProps struct {
+	// Optional HTML id attribute for the progress bar
+	ID string
+
+	// List of additional CSS classes to apply to the progress bar
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Accessible label for screen readers describing the progress
+	AriaLabel string
+
+	// Custom value description for screen readers (e.g., "3 of 10 files uploaded")
+	AriaValueText string
+
+	// Progress bar color variant (primary, success, danger, etc.)
+	Color Color
+
+	// Progress bar size (small, default, medium, large)
+	Size Size
+
+	// Current progress value (0 to Max), nil creates indeterminate progress
+	Value *int
+
+	// Maximum progress value (defaults to 100)
+	Max int
+}
+
+// Progress renders native HTML progress bars with Bulma styling.
+//
+// This component renders Bulma's .progress class on native <progress>
+// elements, providing consistent styling for progress indicators.
+// Supports both determinate progress (with specific values) and
+// indeterminate progress (for unknown duration tasks). Perfect for
+// file uploads, form completion, loading states, and task progress.
+// Includes proper ARIA attributes for accessibility.
+templ Progress(props ...ProgressProps) {
+	{{ var p ProgressProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	// Set default max value if not specified
+	{{ maxValue := 100 }}
+	if p.Max > 0 {
+		{{ maxValue = p.Max }}
+	}
+	<progress
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"progress",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		max={ strconv.Itoa(maxValue) }
+		if p.Value != nil {
+			value={ strconv.Itoa(*p.Value) }
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		if p.AriaValueText != "" {
+			aria-valuetext={ p.AriaValueText }
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</progress>
+}

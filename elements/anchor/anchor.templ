@@ -1,0 +1,167 @@
+package anchor
+
+import "strings"
+
+// Target represents HTML anchor target attribute values
+type Target string
+
+const (
+	TargetBlank  Target = "_blank"  // Opens in new tab/window
+	TargetSelf   Target = "_self"   // Opens in same frame (default)
+	TargetParent Target = "_parent" // Opens in parent frame
+	TargetTop    Target = "_top"    // Opens in full window
+)
+
+// Rel represents HTML anchor rel attribute values for link relationships
+type Rel string
+
+const (
+	RelNoopener   Rel = "noopener"   // Security: prevents window.opener access
+	RelNoreferrer Rel = "noreferrer" // Privacy: prevents referrer header
+	RelNofollow   Rel = "nofollow"   // SEO: tells search engines not to follow
+	RelExternal   Rel = "external"   // Indicates external link
+	RelBookmark   Rel = "bookmark"   // Permanent link to section
+	RelHelp       Rel = "help"       // Link to help document
+	RelLicense    Rel = "license"    // Link to license document
+	RelNext       Rel = "next"       // Next document in series
+	RelPrev       Rel = "prev"       // Previous document in series
+	RelTag        Rel = "tag"        // Tag/keyword for current document
+)
+
+// TextColor represents Bulma text color modifiers for anchors
+type TextColor string
+
+const (
+	HasTextPrimary TextColor = "has-text-primary"
+	HasTextInfo    TextColor = "has-text-info"
+	HasTextSuccess TextColor = "has-text-success"
+	HasTextWarning TextColor = "has-text-warning"
+	HasTextDanger  TextColor = "has-text-danger"
+	HasTextDark    TextColor = "has-text-dark"
+	HasTextLight   TextColor = "has-text-light"
+	HasTextWhite   TextColor = "has-text-white"
+)
+
+// AnchorProps defines properties for anchor elements.
+// Supports standard HTML attributes and Bulma styling for consistent link presentation.
+type AnchorProps struct {
+	// URL or path to link to
+	Href string
+	// HTML id attribute for the anchor
+	ID string
+	// List of additional CSS classes to apply
+	Class []string
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+	// Target window/frame for the link
+	Target Target
+	// Relationship between current document and linked document
+	Rel []Rel
+	// Bulma text color modifier
+	TextColor TextColor
+	// Title attribute for accessibility and tooltips
+	Title string
+	// ARIA label for screen readers and accessibility
+	AriaLabel string
+	// Download attribute - suggests file should be downloaded
+	Download string
+}
+
+// Anchor generates HTML anchor elements with proper security and accessibility features.
+// Automatically adds security attributes for external links and supports Bulma styling.
+// Provides semantic link relationships and proper accessibility attributes.
+templ Anchor(props AnchorProps) {
+	// Build class string only if we have classes to add
+	{{ var classes []string }}
+	{{if props.TextColor != "" {
+	classes = append(classes, string(props.TextColor))
+}
+	}}
+	{{if len(props.Class) > 0 {
+	classes = append(classes, props.Class...)
+}
+	}}
+	<a
+		href={ templ.SafeURL(props.Href) }
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Target != "" {
+			target={ string(props.Target) }
+		}
+		if len(props.Rel) > 0 {
+			rel={ strings.Join(convertRelSlice(props.Rel), " ") }
+		}
+		if props.Title != "" {
+			title={ props.Title }
+		}
+		if props.AriaLabel != "" {
+			aria-label={ props.AriaLabel }
+		}
+		if props.Download != "" {
+			download={ props.Download }
+		}
+		if len(classes) > 0 {
+			class={ strings.Join(classes, " ") }
+		}
+		{ props.Attributes... }
+	>
+		{ children... }
+	</a>
+}
+
+// Helper function to convert Rel slice to string slice
+func convertRelSlice(rels []Rel) []string {
+	result := make([]string, len(rels))
+	for i, rel := range rels {
+		result[i] = string(rel)
+	}
+	return result
+}
+
+// ExternalLink is a convenience function for external links with security attributes.
+// Automatically adds target="_blank" and security rel attributes.
+templ ExternalLink(href, text string) {
+	@Anchor(AnchorProps{
+		Href:   href,
+		Target: TargetBlank,
+		Rel:    []Rel{RelNoopener, RelNoreferrer},
+	}) {
+		{ text }
+	}
+}
+
+// ExternalLinkWithLabel is a convenience function for external links with aria-label.
+// Useful for icon-only links or when the link text needs additional context.
+templ ExternalLinkWithLabel(href, text, ariaLabel string) {
+	@Anchor(AnchorProps{
+		Href:      href,
+		Target:    TargetBlank,
+		Rel:       []Rel{RelNoopener, RelNoreferrer},
+		AriaLabel: ariaLabel,
+	}) {
+		{ text }
+	}
+}
+
+// EmailLink is a convenience function for mailto links.
+// Generates proper mailto URLs with optional subject and body.
+templ EmailLink(email, subject, body, text string) {
+	{{ href := "mailto:" + email }}
+	{{if subject != "" || body != "" {
+	href += "?"
+	if subject != "" {
+		href += "subject=" + subject
+	}
+	if subject != "" && body != "" {
+		href += "&"
+	}
+	if body != "" {
+		href += "body=" + body
+	}
+}
+	}}
+	@Anchor(AnchorProps{Href: href}) {
+		{ text }
+	}
+}

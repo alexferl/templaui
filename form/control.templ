@@ -1,0 +1,64 @@
+package form
+
+import "strings"
+
+// ControlProps defines configuration for form control containers.
+//
+// Use this type to configure Bulma .control elements which provide
+// versatile block containers for enhancing single form controls.
+// The control container has the same height as the element it wraps
+// and can only contain input, select, button, and icon elements.
+// Essential for icon positioning, loading states, and form layout.
+type ControlProps struct {
+	// Optional HTML id attribute for the control container
+	ID string
+
+	// List of additional CSS classes to apply to the control
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Enable left icon positioning (requires .icon.is-left child)
+	HasIconsLeft bool
+
+	// Enable right icon positioning (requires .icon.is-right child)
+	HasIconsRight bool
+
+	// Expand control to fill remaining space in grouped/addon layouts
+	IsExpanded bool
+
+	// Show loading spinner overlay on the control
+	IsLoading bool
+}
+
+// Control renders containers for individual form controls.
+//
+// This component renders Bulma's .control class which creates versatile
+// block containers designed to enhance single form controls. The control
+// maintains the same height as its wrapped element and enables icon
+// positioning, loading states, and expansion behavior in grouped layouts.
+// Can only contain input, select, button, and icon elements. Essential
+// building block for form field layouts within .field containers.
+templ Control(props ...ControlProps) {
+	{{ var p ControlProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"control",
+			templ.KV("has-icons-left", p.HasIconsLeft),
+			templ.KV("has-icons-right", p.HasIconsRight),
+			templ.KV("is-expanded", p.IsExpanded),
+			templ.KV("is-loading", p.IsLoading),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

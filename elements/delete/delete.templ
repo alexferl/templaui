@@ -1,0 +1,59 @@
+package delete
+
+import "strings"
+
+// Size represents delete button size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small delete button (16x16px)
+	IsMedium Size = "is-medium" // Medium delete button (24x24px)
+	IsLarge  Size = "is-large"  // Large delete button (32x32px)
+)
+
+// DeleteProps defines configuration for delete button elements.
+//
+// Use this type to configure Bulma .delete elements which provide
+// a circular close/delete button with a cross icon. Perfect for
+// dismissing notifications, modals, tags, or other UI elements.
+// The delete element is always square regardless of size.
+type DeleteProps struct {
+	// Optional HTML id attribute for the delete button
+	ID string
+
+	// List of additional CSS classes to apply to the delete button
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Size of the delete button (small, default, medium, large)
+	Size Size
+}
+
+// Delete renders a circular delete/close button.
+//
+// This component renders Bulma's .delete class as a button element,
+// which creates a circular button with a cross icon for closing or
+// deleting content. Commonly used in notifications, modals, tags,
+// and other dismissible UI components. The button maintains a square
+// aspect ratio at all sizes and includes proper accessibility semantics.
+templ Delete(props ...DeleteProps) {
+	{{ var p DeleteProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<button
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"delete",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</button>
+}

@@ -1,0 +1,277 @@
+package selectbox
+
+import (
+	"strconv"
+	"strings"
+)
+
+// Size represents select dropdown size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small select dropdown size
+	IsNormal Size = "is-normal" // Normal select dropdown size (default)
+	IsMedium Size = "is-medium" // Medium select dropdown size
+	IsLarge  Size = "is-large"  // Large select dropdown size
+)
+
+// Color represents select dropdown color state modifiers
+type Color string
+
+const (
+	IsPrimary Color = "is-primary" // Primary select color (brand)
+	IsLink    Color = "is-link"    // Link select color
+	IsInfo    Color = "is-info"    // Info select color (blue)
+	IsSuccess Color = "is-success" // Success select color (green)
+	IsWarning Color = "is-warning" // Warning select color (yellow)
+	IsDanger  Color = "is-danger"  // Danger/error select color (red)
+)
+
+// SelectProps defines configuration for select dropdown wrappers.
+//
+// Use this type to configure Bulma .select elements which provide
+// styled wrappers around native HTML select elements. Offers enhanced
+// visual styling with consistent cross-browser appearance and support
+// for icons. Should be wrapped in .control containers for proper
+// form layout and icon support.
+type SelectProps struct {
+	// Optional HTML id attribute for the select wrapper
+	ID string
+
+	// List of additional CSS classes to apply to the wrapper
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Enable multiple selection with list-style appearance
+	IsMultiple bool
+
+	// Apply rounded corners to the select dropdown
+	IsRounded bool
+
+	// Expand select to full width of container
+	IsFullwidth bool
+
+	// Select dropdown size (small, normal, medium, large)
+	Size Size
+
+	// Select color state for validation feedback
+	Color Color
+
+	// Apply hover state styling
+	IsHovered bool
+
+	// Apply focused state styling
+	IsFocused bool
+
+	// Apply active state styling
+	IsActive bool
+}
+
+// Select renders styled select dropdown wrappers.
+//
+// This component renders Bulma's .select class which provides enhanced
+// styling for native HTML select elements. The wrapper ensures consistent
+// cross-browser appearance with support for icons through control containers.
+// Should contain a SelectElement component with Option/Optgroup children.
+// Perfect for dropdown menus, form selections, and multiple choice inputs.
+templ Select(props ...SelectProps) {
+	{{ var p SelectProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"select",
+			templ.KV("is-multiple", p.IsMultiple),
+			templ.KV("is-rounded", p.IsRounded),
+			templ.KV("is-fullwidth", p.IsFullwidth),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Color), p.Color != ""),
+			templ.KV("is-hovered", p.IsHovered),
+			templ.KV("is-focused", p.IsFocused),
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// SelectElementProps defines configuration for native select elements.
+// Use this type to configure native HTML select elements within
+// Bulma select wrappers. Supports all standard select attributes
+// including multiple selection, size specification, and form
+// validation. Should contain Option and Optgroup components.
+type SelectElementProps struct {
+	// Optional HTML id attribute for the select element
+	ID string
+
+	// List of additional CSS classes to apply to the select
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for form submission
+	Name string
+
+	// Enable multiple option selection
+	Multiple bool
+
+	// Number of visible options (for multiple selects)
+	Size int
+
+	// Disable select interaction
+	Disabled bool
+
+	// Mark select as required for form validation
+	Required bool
+}
+
+// SelectElement renders native HTML select elements.
+//
+// This component renders native HTML select elements with proper
+// attributes for form handling and validation. Should be wrapped
+// within Select components for Bulma styling. Contains Option
+// and Optgroup components for selection choices.
+templ SelectElement(props ...SelectElementProps) {
+	{{ var p SelectElementProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<select
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Multiple {
+			multiple
+		}
+		if p.Size > 0 {
+			size={ strconv.Itoa(p.Size) }
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Required {
+			required
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</select>
+}
+
+// OptionProps defines configuration for select option elements.
+// Use this type to configure individual option elements within
+// select dropdowns. Represents individual selectable choices
+// with values, selection states, and disable capability.
+type OptionProps struct {
+	// Optional HTML id attribute for the option
+	ID string
+
+	// List of additional CSS classes to apply to the option
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Value sent when this option is selected
+	Value string
+
+	// Initial selected state of the option
+	Selected bool
+
+	// Disable option selection
+	Disabled bool
+}
+
+// Option renders individual select option elements.
+//
+// This component renders HTML option elements within select dropdowns.
+// Represents individual selectable choices with configurable values,
+// selection states, and disabled options. The display text should be
+// provided as children content.
+templ Option(props ...OptionProps) {
+	{{ var p OptionProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<option
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		if p.Selected {
+			selected
+		}
+		if p.Disabled {
+			disabled
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</option>
+}
+
+// OptgroupProps defines configuration for option group elements.
+// Use this type to configure optgroup elements which organize
+// related options within select dropdowns. Provides visual
+// grouping and labeling for better user experience with
+// large option sets.
+type OptgroupProps struct {
+	// Optional HTML id attribute for the optgroup
+	ID string
+
+	// List of additional CSS classes to apply to the optgroup
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Visible label for the option group
+	Label string
+
+	// Disable entire option group
+	Disabled bool
+}
+
+// Optgroup renders option group containers.
+//
+// This component renders HTML optgroup elements which organize
+// related options within select dropdowns. Provides visual
+// grouping with labels for better navigation in complex
+// select menus. Should contain Option components.
+templ Optgroup(props ...OptgroupProps) {
+	{{ var p OptgroupProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<optgroup
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Label != "" {
+			label={ p.Label }
+		}
+		if p.Disabled {
+			disabled
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</optgroup>
+}

@@ -1,0 +1,312 @@
+package title
+
+import (
+	"strconv"
+	"strings"
+)
+
+// Size represents title and subtitle size modifiers
+type Size string
+
+const (
+	Is1 Size = "is-1" // Largest heading size (3.25rem)
+	Is2 Size = "is-2" // Second largest heading size (2.75rem)
+	Is3 Size = "is-3" // Default title size (2.25rem)
+	Is4 Size = "is-4" // Fourth heading size (1.875rem)
+	Is5 Size = "is-5" // Default subtitle size (1.25rem)
+	Is6 Size = "is-6" // Smallest heading size (1rem)
+	Is7 Size = "is-7" // Extra small heading size (0.75rem)
+)
+
+// TitleProps defines configuration for title heading elements.
+//
+// Use this type to configure Bulma .title elements which create
+// prominent headings for pages and sections. Supports semantic
+// heading levels (h1-h6) with independent visual sizing. Perfect
+// for page titles, section headers, and primary content headings.
+type TitleProps struct {
+	// Optional HTML id attribute for the title
+	ID string
+
+	// List of additional CSS classes to apply to the title
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// HTML heading level (h1-h6), defaults to h1 if not specified
+	Level int
+
+	// Visual size of the title (is-1 to is-7, defaults to is-3)
+	Size Size
+
+	// Maintain normal spacing when followed by subtitle
+	IsSpaced bool
+}
+
+// Title renders main heading elements with Bulma styling.
+//
+// This component renders Bulma's .title class on semantic HTML
+// heading elements (h1-h6). Separates visual presentation from
+// semantic meaning - you can have an h4 element that looks like
+// a large title. Default size is is-3 (2.25rem). Use IsSpaced
+// to prevent margin collapse when combining with subtitles.
+templ Title(props ...TitleProps) {
+	{{ var p TitleProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{
+	// Determine heading level
+	headingLevel := p.Level
+	if headingLevel == 0 {
+		// Default to h1 for title
+		headingLevel = 1
+	}
+	if headingLevel < 1 {
+		headingLevel = 1
+	}
+	if headingLevel > 6 {
+		headingLevel = 6
+	}
+
+	headingTag := "h" + strconv.Itoa(headingLevel)
+	}}
+	if headingTag == "h1" {
+		<h1
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h1>
+	} else if headingTag == "h2" {
+		<h2
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h2>
+	} else if headingTag == "h3" {
+		<h3
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h3>
+	} else if headingTag == "h4" {
+		<h4
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h4>
+	} else if headingTag == "h5" {
+		<h5
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h5>
+	} else {
+		<h6
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"title",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h6>
+	}
+}
+
+// SubtitleProps defines configuration for subtitle heading elements.
+// Use this type to configure Bulma .subtitle elements which create
+// secondary headings that complement titles. Supports semantic
+// heading levels (h1-h6) with independent visual sizing. Perfect
+// for taglines, descriptions, and secondary content headings.
+type SubtitleProps struct {
+	// Optional HTML id attribute for the subtitle
+	ID string
+
+	// List of additional CSS classes to apply to the subtitle
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// HTML heading level (h1-h6), defaults to h2 if not specified
+	Level int
+
+	// Visual size of the subtitle (is-1 to is-7, defaults to is-5)
+	Size Size
+
+	// Maintain normal spacing when preceded by title
+	IsSpaced bool
+}
+
+// Subtitle renders secondary heading elements with Bulma styling.
+//
+// This component renders Bulma's .subtitle class on semantic HTML
+// heading elements (h1-h6). Separates visual presentation from
+// semantic meaning. Default size is is-5 (1.25rem). Automatically
+// moves closer to adjacent title elements unless IsSpaced is used.
+// Best practice: use size difference of two from paired title.
+templ Subtitle(props ...SubtitleProps) {
+	{{ var p SubtitleProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{
+	// Determine heading level
+	headingLevel := p.Level
+	if headingLevel == 0 {
+		// Default to h2 for subtitle
+		headingLevel = 2
+	}
+	if headingLevel < 1 {
+		headingLevel = 1
+	}
+	if headingLevel > 6 {
+		headingLevel = 6
+	}
+
+	headingTag := "h" + strconv.Itoa(headingLevel)
+	}}
+	if headingTag == "h1" {
+		<h1
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h1>
+	} else if headingTag == "h2" {
+		<h2
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h2>
+	} else if headingTag == "h3" {
+		<h3
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h3>
+	} else if headingTag == "h4" {
+		<h4
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h4>
+	} else if headingTag == "h5" {
+		<h5
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h5>
+	} else {
+		<h6
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"subtitle",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV("is-spaced", p.IsSpaced),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</h6>
+	}
+}

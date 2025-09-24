@@ -1,0 +1,289 @@
+package button
+
+import "strings"
+
+// Size represents button size modifiers
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small button size
+	IsNormal Size = "is-normal" // Normal button size (default)
+	IsMedium Size = "is-medium" // Medium button size
+	IsLarge  Size = "is-large"  // Large button size
+)
+
+// Color represents button color variants
+type Color string
+
+const (
+	IsBlack   Color = "is-black"   // Black button
+	IsDark    Color = "is-dark"    // Dark button
+	IsDanger  Color = "is-danger"  // Danger/error button (red)
+	IsInfo    Color = "is-info"    // Info button (blue)
+	IsLight   Color = "is-light"   // Light button
+	IsLink    Color = "is-link"    // Link-style button
+	IsPrimary Color = "is-primary" // Primary button (brand color)
+	IsSuccess Color = "is-success" // Success button (green)
+	IsText    Color = "is-text"    // Text-only button
+	IsWarning Color = "is-warning" // Warning button (yellow)
+	IsWhite   Color = "is-white"   // White button
+)
+
+// Alignment represents button alignment within containers
+type Alignment string
+
+const (
+	IsCentered Alignment = "is-centered" // Center align buttons
+	IsRight    Alignment = "is-right"    // Right align buttons
+)
+
+// ButtonsSize represents size modifiers for button groups
+type ButtonsSize string
+
+const (
+	AreSmall  ButtonsSize = "are-small"  // All buttons in group are small
+	AreMedium ButtonsSize = "are-medium" // All buttons in group are medium
+	AreLarge  ButtonsSize = "are-large"  // All buttons in group are large
+)
+
+// ButtonProps defines configuration for individual button elements.
+//
+// Use this type to configure Bulma button elements with various
+// colors, sizes, states, and styling options. Can render as
+// button, anchor, or input elements based on props.
+type ButtonProps struct {
+	// Optional HTML id attribute for the button
+	ID string
+
+	// List of additional CSS classes to apply to the button
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Button color variant (primary, success, danger, etc.)
+	Color Color
+
+	// Render as <a> tag instead of <button>
+	IsAnchor bool
+
+	// Render as <input> tag instead of <button>
+	IsInput bool
+
+	// HTML type attribute (button, submit, reset, etc.)
+	Type string
+
+	// Button spans full width of container
+	IsFullwidth bool
+
+	// Use responsive button sizing across breakpoints
+	IsResponsive bool
+
+	// Button size (small, normal, medium, large)
+	Size Size
+
+	// Apply active state styling
+	IsActive bool
+
+	// Expand to fill available width
+	IsExpanded bool
+
+	// Apply focused state styling
+	IsFocused bool
+
+	// Apply hovered state styling
+	IsHovered bool
+
+	// Apply selected state styling
+	IsSelected bool
+
+	// Apply bold text styling
+	IsBold bool
+
+	// Transparent background with border
+	IsGhost bool
+
+	// Invert text and background colors
+	IsInverted bool
+
+	// Show loading spinner, disable interaction
+	IsLoading bool
+
+	// Outlined style with transparent background
+	IsOutlined bool
+
+	// Apply rounded corners
+	IsRounded bool
+
+	// Apply soft/subtle styling
+	IsSoft bool
+
+	// Non-interactive button for labels/alignment
+	IsStatic bool
+}
+
+// Button renders individual button elements.
+//
+// This component renders Bulma's .button class with extensive
+// customization options. Can render as <button>, <a>, or <input>
+// elements based on props. Supports all Bulma button colors,
+// sizes, states, and styling modifiers. Perfect for forms,
+// navigation, calls-to-action, and interactive elements.
+templ Button(props ...ButtonProps) {
+	{{ var p ButtonProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	if p.IsInput {
+		<input
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Type != "" {
+				type={ p.Type }
+			} else {
+				type="button"
+			}
+			class={
+				"button",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV(string(p.Color), p.Color != ""),
+				templ.KV("is-responsive", p.IsResponsive),
+				templ.KV("is-bold", p.IsBold),
+				templ.KV("is-ghost", p.IsGhost),
+				templ.KV("is-inverted", p.IsInverted),
+				templ.KV("is-loading", p.IsLoading),
+				templ.KV("is-outlined", p.IsOutlined),
+				templ.KV("is-rounded", p.IsRounded),
+				templ.KV("is-soft", p.IsSoft),
+				templ.KV("is-static", p.IsStatic),
+				templ.KV("is-fullwidth", p.IsFullwidth),
+				templ.KV("is-active", p.IsActive),
+				templ.KV("is-expanded", p.IsExpanded),
+				templ.KV("is-focused", p.IsFocused),
+				templ.KV("is-hovered", p.IsHovered),
+				templ.KV("is-selected", p.IsSelected),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		/>
+	} else if p.IsAnchor {
+		<a
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			class={
+				"button",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV(string(p.Color), p.Color != ""),
+				templ.KV("is-responsive", p.IsResponsive),
+				templ.KV("is-bold", p.IsBold),
+				templ.KV("is-ghost", p.IsGhost),
+				templ.KV("is-inverted", p.IsInverted),
+				templ.KV("is-loading", p.IsLoading),
+				templ.KV("is-outlined", p.IsOutlined),
+				templ.KV("is-rounded", p.IsRounded),
+				templ.KV("is-soft", p.IsSoft),
+				templ.KV("is-static", p.IsStatic),
+				templ.KV("is-fullwidth", p.IsFullwidth),
+				templ.KV("is-active", p.IsActive),
+				templ.KV("is-expanded", p.IsExpanded),
+				templ.KV("is-focused", p.IsFocused),
+				templ.KV("is-hovered", p.IsHovered),
+				templ.KV("is-selected", p.IsSelected),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</a>
+	} else {
+		<button
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Type != "" {
+				type={ p.Type }
+			} else {
+				type="button"
+			}
+			class={
+				"button",
+				templ.KV(string(p.Size), p.Size != ""),
+				templ.KV(string(p.Color), p.Color != ""),
+				templ.KV("is-responsive", p.IsResponsive),
+				templ.KV("is-bold", p.IsBold),
+				templ.KV("is-ghost", p.IsGhost),
+				templ.KV("is-inverted", p.IsInverted),
+				templ.KV("is-loading", p.IsLoading),
+				templ.KV("is-outlined", p.IsOutlined),
+				templ.KV("is-rounded", p.IsRounded),
+				templ.KV("is-soft", p.IsSoft),
+				templ.KV("is-static", p.IsStatic),
+				templ.KV("is-fullwidth", p.IsFullwidth),
+				templ.KV("is-active", p.IsActive),
+				templ.KV("is-expanded", p.IsExpanded),
+				templ.KV("is-focused", p.IsFocused),
+				templ.KV("is-hovered", p.IsHovered),
+				templ.KV("is-selected", p.IsSelected),
+				templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+			}
+			{ p.Attributes... }
+		>
+			{ children... }
+		</button>
+	}
+}
+
+// ButtonsProps defines configuration for button group containers.
+// Use this type to configure Bulma .buttons containers
+// that group multiple button elements with consistent
+// sizing, alignment, and connection options.
+type ButtonsProps struct {
+	// Optional HTML id attribute for the button group
+	ID string
+
+	// List of additional CSS classes to apply to the group
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Horizontal alignment of buttons (centered, right)
+	Alignment Alignment
+
+	// Uniform size for all buttons in group
+	Size ButtonsSize
+
+	// Connect buttons together without gaps
+	HasAddons bool
+}
+
+// Buttons renders container for button groups.
+//
+// This component renders Bulma's .buttons class which groups
+// multiple button elements together. Provides alignment,
+// uniform sizing, and addon connection options. Perfect
+// for toolbars, form actions, and button collections
+// that need consistent spacing and alignment.
+templ Buttons(props ...ButtonsProps) {
+	{{ var p ButtonsProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"buttons",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(string(p.Alignment), p.Alignment != ""),
+			templ.KV("has-addons", p.HasAddons),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

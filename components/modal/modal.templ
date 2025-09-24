@@ -1,0 +1,381 @@
+package modal
+
+import "strings"
+
+// Size represents modal size modifiers for content width
+type Size string
+
+const (
+	IsSmall  Size = "is-small"  // Small modal width (400px max)
+	IsMedium Size = "is-medium" // Medium modal width (640px max, default)
+	IsLarge  Size = "is-large"  // Large modal width (800px max)
+)
+
+// ModalProps defines configuration for modal overlay containers.
+//
+// Use this type to configure Bulma .modal elements which create
+// overlay dialog boxes displayed on top of page content. Modals
+// require JavaScript for activation and typically contain background,
+// content, and close components. Perfect for forms, confirmations,
+// and detailed content display.
+type ModalProps struct {
+	// Optional HTML id attribute for the modal container
+	ID string
+
+	// List of additional CSS classes to apply to the modal
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Modal content width size (small, medium, large)
+	Size Size
+
+	// Show modal overlay (controlled by JavaScript)
+	IsActive bool
+}
+
+// Modal renders overlay dialog containers.
+//
+// This component renders Bulma's .modal class which creates overlay
+// dialog boxes positioned on top of page content. Requires JavaScript
+// for show/hide functionality and typically contains ModalBackground,
+// ModalContent, and ModalClose components. Hidden by default until
+// IsActive state is applied through user interaction.
+templ Modal(props ...ModalProps) {
+	{{ var p ModalProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal",
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV("is-active", p.IsActive),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// ModalBackgroundProps defines configuration for modal backdrop elements.
+// Use this type to configure .modal-background elements which provide
+// the transparent dark overlay behind modal content. Clicking the
+// background typically closes the modal through JavaScript event handling.
+type ModalBackgroundProps struct {
+	// Optional HTML id attribute for the modal background
+	ID string
+
+	// List of additional CSS classes to apply to the background
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalBackground renders transparent modal backdrops.
+//
+// This component renders Bulma's .modal-background class which creates
+// a transparent dark overlay covering the entire viewport. Serves as
+// both visual backdrop and click target for closing modals. Essential
+// for modal focus management and user interaction handling.
+templ ModalBackground(props ...ModalBackgroundProps) {
+	{{ var p ModalBackgroundProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-background",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	></div>
+}
+
+// ModalContentProps defines configuration for modal content containers.
+// Use this type to configure .modal-content elements which provide
+// the main content area within modals. Features maximum width
+// constraints and centered positioning. Can contain any content
+// including images, forms, or custom components.
+type ModalContentProps struct {
+	// Optional HTML id attribute for the modal content
+	ID string
+
+	// List of additional CSS classes to apply to the content container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalContent renders modal content containers.
+//
+// This component renders Bulma's .modal-content class which creates
+// the main content area with maximum width of 640px (default) and
+// centered positioning. Can contain any type of content and serves
+// as the primary container for modal information and interactions.
+templ ModalContent(props ...ModalContentProps) {
+	{{ var p ModalContentProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-content",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// ModalCloseProps defines configuration for modal close buttons.
+// Use this type to configure .modal-close elements which provide
+// the standard close button positioned in the top-right corner.
+// Features a cross icon and requires JavaScript event handling
+// to close the modal when clicked.
+type ModalCloseProps struct {
+	// Optional HTML id attribute for the close button
+	ID string
+
+	// List of additional CSS classes to apply to the close button
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalClose renders modal close buttons.
+//
+// This component renders Bulma's .modal-close class as a button element,
+// which creates the standard close button with cross icon positioned
+// in the top-right corner. Requires JavaScript event handling to
+// actually close the modal when activated.
+templ ModalClose(props ...ModalCloseProps) {
+	{{ var p ModalCloseProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<button
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-close",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	></button>
+}
+
+// ModalCardProps defines configuration for structured modal card containers.
+// Use this type to configure .modal-card elements which provide
+// an alternative to modal-content with predefined structure including
+// header, body, and footer sections. Perfect for forms, confirmations,
+// and structured content display.
+type ModalCardProps struct {
+	// Optional HTML id attribute for the modal card
+	ID string
+
+	// List of additional CSS classes to apply to the card container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalCard renders structured modal card containers.
+//
+// This component renders Bulma's .modal-card class which provides
+// an alternative to modal-content with predefined structure. Contains
+// ModalCardHead, ModalCardBody, and ModalCardFoot components for
+// organized content layout. Ideal for forms and structured dialogs.
+templ ModalCard(props ...ModalCardProps) {
+	{{ var p ModalCardProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-card",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// ModalCardHeadProps defines configuration for modal card headers.
+// Use this type to configure .modal-card-head elements which provide
+// the header section of modal cards. Typically contains title and
+// close button with consistent styling and spacing.
+type ModalCardHeadProps struct {
+	// Optional HTML id attribute for the card header
+	ID string
+
+	// List of additional CSS classes to apply to the header
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalCardHead renders modal card header sections.
+//
+// This component renders Bulma's .modal-card-head class as a header element,
+// which creates the header section with border and padding. Should contain
+// ModalCardTitle and optionally a delete button for modal closure.
+templ ModalCardHead(props ...ModalCardHeadProps) {
+	{{ var p ModalCardHeadProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<header
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-card-head",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</header>
+}
+
+// ModalCardTitleProps defines configuration for modal card titles.
+// Use this type to configure .modal-card-title elements which display
+// the modal title within card headers. Features appropriate typography
+// and spacing for modal identification.
+type ModalCardTitleProps struct {
+	// Optional HTML id attribute for the card title
+	ID string
+
+	// List of additional CSS classes to apply to the title
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalCardTitle renders modal card title text.
+//
+// This component renders Bulma's .modal-card-title class as a p element,
+// which displays the modal title with appropriate typography and spacing.
+// Essential for modal identification and accessibility.
+templ ModalCardTitle(props ...ModalCardTitleProps) {
+	{{ var p ModalCardTitleProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<p
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-card-title",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</p>
+}
+
+// ModalCardBodyProps defines configuration for modal card body content.
+// Use this type to configure .modal-card-body elements which contain
+// the main content of modal cards. Features scrollable content area
+// with appropriate padding and spacing for optimal readability.
+type ModalCardBodyProps struct {
+	// Optional HTML id attribute for the card body
+	ID string
+
+	// List of additional CSS classes to apply to the body
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalCardBody renders modal card body content areas.
+//
+// This component renders Bulma's .modal-card-body class as a section element,
+// which creates the main content area with scrollable overflow and
+// appropriate padding. Contains the primary modal content including
+// forms, text, or other interactive elements.
+templ ModalCardBody(props ...ModalCardBodyProps) {
+	{{ var p ModalCardBodyProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-card-body",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</section>
+}
+
+// ModalCardFootProps defines configuration for modal card footers.
+// Use this type to configure .modal-card-foot elements which provide
+// the footer section containing action buttons. Features flex layout
+// for button alignment and consistent spacing.
+type ModalCardFootProps struct {
+	// Optional HTML id attribute for the card footer
+	ID string
+
+	// List of additional CSS classes to apply to the footer
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// ModalCardFoot renders modal card footer sections.
+//
+// This component renders Bulma's .modal-card-foot class as a footer element,
+// which creates the footer section with flex layout for action buttons.
+// Typically contains save, cancel, and other modal action buttons
+// with appropriate spacing and alignment.
+templ ModalCardFoot(props ...ModalCardFootProps) {
+	{{ var p ModalCardFootProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<footer
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"modal-card-foot",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</footer>
+}

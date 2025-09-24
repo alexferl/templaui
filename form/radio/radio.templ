@@ -1,0 +1,191 @@
+package radio
+
+import "strings"
+
+// RadioProps defines configuration for radio button input wrappers.
+//
+// Use this type to configure Bulma .radio elements which provide
+// label wrappers around radio inputs. Bulma intentionally provides
+// minimal styling to preserve cross-browser compatibility. Radio
+// buttons with the same Name form mutually exclusive groups where
+// only one option can be selected at a time.
+type RadioProps struct {
+	// Optional HTML id attribute for the radio label
+	ID string
+
+	// List of additional CSS classes to apply to the radio label
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for grouping radio buttons (same name = same group)
+	Name string
+
+	// Value attribute sent when this radio button is selected
+	Value string
+
+	// Initial checked state of the radio button
+	Checked bool
+
+	// Disable radio button interaction
+	Disabled bool
+
+	// Mark radio button as required for form validation
+	Required bool
+}
+
+// Radio renders labeled radio button input elements.
+//
+// This component renders Bulma's .radio class as a label element
+// containing an input[type="radio"]. Bulma provides minimal styling
+// to maintain cross-browser compatibility. Radio buttons with the
+// same Name attribute form mutually exclusive groups. The label text
+// should be provided as children content. Best used within field
+// and control containers for consistent form layout.
+templ Radio(props ...RadioProps) {
+	{{ var p RadioProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<label
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"radio",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		<input
+			type="radio"
+			if p.Name != "" {
+				name={ p.Name }
+			}
+			if p.Value != "" {
+				value={ p.Value }
+			}
+			if p.Checked {
+				checked
+			}
+			if p.Disabled {
+				disabled
+			}
+			if p.Required {
+				required
+			}
+		/>
+		{ children... }
+	</label>
+}
+
+// RadiosProps defines configuration for radio button group containers.
+// Use this type to configure containers for multiple related radio
+// buttons within the same selection group. Provides consistent
+// spacing and organization for radio button groups within forms.
+// Should be used within field containers for proper form layout.
+type RadiosProps struct {
+	// Optional HTML id attribute for the radios container
+	ID string
+
+	// List of additional CSS classes to apply to the container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+}
+
+// Radios renders containers for radio button groups.
+//
+// This component renders a div container for organizing multiple
+// related radio button elements with consistent spacing. Perfect
+// for grouping mutually exclusive options that allow only one
+// selection. Should contain multiple Radio components with the
+// same Name attribute.
+templ Radios(props ...RadiosProps) {
+	{{ var p RadiosProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"radios",
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// RadioInputProps defines configuration for standalone radio inputs.
+// Use this type to configure standalone radio input elements without
+// automatic label wrappers. Useful for custom radio implementations
+// or when you need more control over the label structure and
+// positioning within mutually exclusive groups.
+type RadioInputProps struct {
+	// Optional HTML id attribute for the radio input
+	ID string
+
+	// List of additional CSS classes to apply to the input
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Name attribute for grouping radio buttons (same name = same group)
+	Name string
+
+	// Value attribute sent when this radio button is selected
+	Value string
+
+	// Initial checked state of the radio button
+	Checked bool
+
+	// Disable radio button interaction
+	Disabled bool
+
+	// Mark radio button as required for form validation
+	Required bool
+}
+
+// RadioInput renders standalone radio input elements.
+//
+// This component renders a standalone input[type="radio"] element
+// without automatic label wrapping. Useful for custom implementations
+// where you need more control over label positioning or when building
+// complex radio button layouts. Remember to associate with labels
+// manually for accessibility and ensure proper Name grouping.
+templ RadioInput(props ...RadioInputProps) {
+	{{ var p RadioInputProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<input
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		type="radio"
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		if p.Checked {
+			checked
+		}
+		if p.Disabled {
+			disabled
+		}
+		if p.Required {
+			required
+		}
+		class={ strings.Join(p.Class, " ") }
+		{ p.Attributes... }
+	/>
+}

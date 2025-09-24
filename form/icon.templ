@@ -1,0 +1,57 @@
+package form
+
+import "strings"
+
+// IconProps defines configuration for form control icons.
+//
+// Use this type to configure Bulma .icon elements within form controls.
+// Icons provide visual enhancement and context for form inputs, selects,
+// and buttons. Requires parent control to have has-icons-left or
+// has-icons-right modifiers. Icon size automatically adapts to the
+// containing form control size, maintaining perfect centering.
+type IconProps struct {
+	// Optional HTML id attribute for the icon container
+	ID string
+
+	// List of additional CSS classes to apply to the icon container
+	Class []string
+
+	// Additional arbitrary HTML attributes
+	Attributes templ.Attributes
+
+	// Icon position relative to form control (left or right)
+	Position IconPosition
+
+	// Icon size modifier (inherits from control size if not specified)
+	Size Size
+}
+
+// Icon renders icon containers for form controls.
+//
+// This component renders Bulma's .icon class within form controls to
+// provide visual enhancement and context. Must be used within a control
+// container that has has-icons-left or has-icons-right modifiers matching
+// the Position prop. Bulma automatically centers icons regardless of
+// input or icon size. Should contain actual icon elements like Font Awesome
+// icons or SVG graphics. The input must be the control's first child for
+// proper icon positioning.
+templ Icon(props ...IconProps) {
+	{{ var p IconProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			"icon",
+			templ.KV(string(p.Position), p.Position != ""),
+			templ.KV(string(p.Size), p.Size != ""),
+			templ.KV(strings.Join(p.Class, " "), len(p.Class) > 0),
+		}
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
