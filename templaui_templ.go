@@ -17,8 +17,10 @@ type DocumentProps struct {
 	Description string
 	// HTML language attribute (defaults to "en")
 	Lang string
-	// Path to favicon (defaults to data: URI if empty)
+	// Path to favicon (if empty and NoFavicon is false, uses data: URI fallback)
 	Favicon string
+	// If true, completely omits favicon link tag instead of using data: URI fallback
+	NoFavicon bool
 	// If true, loads Bulma CSS from local file instead of CDN
 	UseLocalCSS bool
 	// Custom path for local Bulma CSS file
@@ -82,7 +84,7 @@ func Document(props DocumentProps, headContents ...templ.Component) templ.Compon
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.Lang)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 56, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 58, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -95,7 +97,7 @@ func Document(props DocumentProps, headContents ...templ.Component) templ.Compon
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 58, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 60, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -108,6 +110,7 @@ func Document(props DocumentProps, headContents ...templ.Component) templ.Compon
 		templ_7745c5c3_Err = MetaHead(MetaHeadProps{
 			Description: p.Description,
 			Favicon:     p.Favicon,
+			NoFavicon:   p.NoFavicon,
 			Charset:     p.Charset,
 			Viewport:    p.Viewport,
 			Theme:       p.Theme,
@@ -220,7 +223,7 @@ func Head(props HeadProps, headContents ...templ.Component) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 100, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 103, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -249,8 +252,10 @@ func Head(props HeadProps, headContents ...templ.Component) templ.Component {
 type MetaHeadProps struct {
 	// Meta description for search engines
 	Description string
-	// Path to favicon file
+	// Path to favicon file (if empty and NoFavicon is false, uses data: URI fallback)
 	Favicon string
+	// If true, completely omits favicon link tag instead of using data: URI fallback
+	NoFavicon bool
 	// Character encoding (usually UTF-8)
 	Charset string
 	// Viewport configuration for responsive design
@@ -270,6 +275,10 @@ type MetaHeadProps struct {
 // Only outputs tags when corresponding properties are provided (except charset/viewport).
 // Automatically defaults to Bulma's primary color (#00d1b2) for theme-color and
 // "light dark" for color-scheme if not specified.
+// Favicon behavior:
+// - If NoFavicon is true: No favicon link is generated
+// - If Favicon is provided: Uses the provided favicon path
+// - If Favicon is empty and NoFavicon is false: Uses empty data URI fallback
 func MetaHead(props MetaHeadProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -339,15 +348,17 @@ func MetaHead(props MetaHeadProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if props.Favicon != "" {
-			templ_7745c5c3_Err = Link(LinkProps{Rel: "icon", Href: props.Favicon}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = Link(LinkProps{Rel: "icon", Href: "data:,"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+		if !props.NoFavicon {
+			if props.Favicon != "" {
+				templ_7745c5c3_Err = Link(LinkProps{Rel: "icon", Href: props.Favicon}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = Link(LinkProps{Rel: "icon", Href: "data:,"}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 		}
 		return nil
@@ -409,7 +420,7 @@ func Body(props ...BodyProps) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(p.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 189, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 200, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -643,7 +654,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.Charset)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 287, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 298, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -661,7 +672,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.HttpEquiv)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 289, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 300, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -674,7 +685,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(props.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 289, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 300, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -692,7 +703,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(props.Property)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 291, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 302, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -705,7 +716,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(props.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 291, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 302, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -723,7 +734,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 293, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 304, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -736,7 +747,7 @@ func Meta(props MetaProps) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(props.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 293, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 304, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -808,7 +819,7 @@ func Link(props LinkProps) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(props.Rel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 328, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 339, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -821,7 +832,7 @@ func Link(props LinkProps) templ.Component {
 		var templ_7745c5c3_Var25 templ.SafeURL
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 329, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 340, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -839,7 +850,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(props.Type)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 331, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 342, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -858,7 +869,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var27 string
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(props.Sizes)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 334, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 345, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -877,7 +888,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(props.Integrity)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 337, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 348, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -896,7 +907,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(props.CrossOrigin)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 340, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 351, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -915,7 +926,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(props.ReferrerPolicy)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 343, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 354, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -934,7 +945,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(props.As)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 346, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 357, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -953,7 +964,7 @@ func Link(props LinkProps) templ.Component {
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(props.Media)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 349, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 360, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -1032,7 +1043,7 @@ func HTML(props HTMLProps, headContents ...templ.Component) templ.Component {
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(p.Lang)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 388, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templaui.templ`, Line: 399, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
