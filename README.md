@@ -1,4 +1,4 @@
-# TemplaUI
+# TemplaUI [![Go Report Card](https://goreportcard.com/badge/github.com/alexferl/templaui)](https://goreportcard.com/report/github.com/alexferl/templaui) [![codecov](https://codecov.io/gh/alexferl/templaui/branch/master/graph/badge.svg)](https://codecov.io/gh/alexferl/templaui)
 
 **⚠️ This is a pre-v1 release - APIs may change as we work toward a stable v1.0.**
 
